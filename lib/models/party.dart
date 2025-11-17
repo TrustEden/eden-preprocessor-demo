@@ -4,7 +4,7 @@ import 'quest.dart';
 
 enum LootDistribution {
   equal, // Split equally
-  needBefore Greed, // Based on usefulness
+  needBeforeGreed, // Based on usefulness
   rollingContest, // Roll for items
   leaderDecides, // Party leader distributes
 }
@@ -91,7 +91,10 @@ class Party {
   }
 
   void setLeader(String characterId) {
-    leader = members.firstWhere((c) => c.id == characterId);
+    leader = members.firstWhere(
+      (c) => c.id == characterId,
+      orElse: () => throw Exception('Character not found in party'),
+    );
   }
 
   // ==================== PARTY STATS ====================
@@ -278,7 +281,10 @@ class Party {
   }
 
   void completeQuest(String questId) {
-    var quest = activeQuests.firstWhere((q) => q.id == questId);
+    var quest = activeQuests.firstWhere(
+      (q) => q.id == questId,
+      orElse: () => throw Exception('Quest not found in active quests'),
+    );
     quest.completeQuest();
 
     // Distribute rewards

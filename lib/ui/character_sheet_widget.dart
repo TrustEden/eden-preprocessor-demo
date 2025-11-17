@@ -110,7 +110,7 @@ class _CharacterSheetWidgetState extends State<CharacterSheetWidget>
 
   Widget _buildHPBar() {
     double hpPercent =
-        widget.character.hitPointsCurrent / widget.character.hitPointsMax;
+        widget.character.hpCurrent / widget.character.hpMax;
     Color hpColor = hpPercent > 0.5
         ? Colors.green
         : hpPercent > 0.25
@@ -124,7 +124,7 @@ class _CharacterSheetWidgetState extends State<CharacterSheetWidget>
           children: [
             const Text('Hit Points'),
             Text(
-              '${widget.character.hitPointsCurrent} / ${widget.character.hitPointsMax}',
+              '${widget.character.hpCurrent} / ${widget.character.hpMax}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -640,7 +640,7 @@ class _CharacterSheetWidgetState extends State<CharacterSheetWidget>
                 ListTile(
                   leading: _getItemIcon(item.type),
                   title: Text(item.name),
-                  subtitle: Text(item.description),
+                  subtitle: Text('${item.type} - ${item.weight} lbs'),
                   trailing: Text('${item.value} gp'),
                 ),
           ],

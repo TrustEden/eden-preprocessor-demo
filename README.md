@@ -113,12 +113,30 @@ lib/
    cd eden-preprocessor-demo
    ```
 
-2. **Install dependencies**
+2. **Enable desktop support** (if not already enabled)
+   ```bash
+   # For Linux
+   flutter config --enable-linux-desktop
+
+   # For macOS
+   flutter config --enable-macos-desktop
+
+   # For Windows
+   flutter config --enable-windows-desktop
+   ```
+
+3. **Install dependencies**
    ```bash
    flutter pub get
    ```
 
-3. **Run the application**
+4. **Verify installation**
+   ```bash
+   flutter doctor
+   ```
+   Make sure all checks pass for your target platform.
+
+5. **Run the application**
    ```bash
    # For Linux
    flutter run -d linux
@@ -268,6 +286,39 @@ Database location: `~/.ai_dungeon_master/ai_dungeon_master.db`
 - Batch related API calls
 - Adjust narrative detail level in settings
 - Pre-generate content for offline play sessions
+
+## Code Quality & Testing
+
+### Recent Code Review (Latest)
+The codebase has undergone a comprehensive code review and quality assurance process:
+
+**Critical Issues Fixed:**
+- ✅ Fixed syntax error in enum definition (`needBeforeGreed` in `LootDistribution`)
+- ✅ Added missing imports for model classes (`Item`, `NPC`, `Dungeon`)
+- ✅ Corrected property name mismatches in UI components (e.g., `hpCurrent/hpMax` vs `hitPointsCurrent/hitPointsMax`)
+
+**High Priority Fixes:**
+- ✅ Added error handling with `orElse` parameters to all `firstWhere()` calls to prevent runtime exceptions
+- ✅ Fixed unsafe array access and null reference issues
+- ✅ Corrected property references in CharacterSheetWidget to match EnhancedCharacter model
+
+**Code Quality Improvements:**
+- All model imports verified and corrected
+- Null safety handling improved across data models
+- Database schema validated against model definitions
+- Error handling enhanced in critical paths
+
+**Known Limitations:**
+- Some debug `print()` statements remain (useful for development/troubleshooting)
+- Database schema could be expanded to persist all character properties
+- Consider adding comprehensive unit tests for game mechanics
+
+### Testing Checklist
+Before running the application, ensure:
+- [ ] Flutter SDK 3.0+ is installed (`flutter doctor`)
+- [ ] All dependencies are fetched (`flutter pub get`)
+- [ ] Desktop support is enabled for your platform
+- [ ] You have a valid Claude API key ready
 
 ## Development Notes
 
