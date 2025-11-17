@@ -1,6 +1,7 @@
 import 'party.dart';
 import 'quest.dart';
 import 'faction.dart';
+import 'item.dart';
 import '../services/procedural_generation.dart';
 
 enum CampaignStatus {
@@ -273,7 +274,10 @@ class Campaign {
   }
 
   void acceptQuest(String questId) {
-    var quest = availableQuests.firstWhere((q) => q.id == questId);
+    var quest = availableQuests.firstWhere(
+      (q) => q.id == questId,
+      orElse: () => throw Exception('Quest not found in available quests'),
+    );
     quest.status = QuestStatus.active;
     availableQuests.removeWhere((q) => q.id == questId);
     activeQuests.add(quest);
@@ -286,7 +290,10 @@ class Campaign {
   }
 
   void completeQuest(String questId) {
-    var quest = activeQuests.firstWhere((q) => q.id == questId);
+    var quest = activeQuests.firstWhere(
+      (q) => q.id == questId,
+      orElse: () => throw Exception('Quest not found in active quests'),
+    );
     quest.completeQuest();
 
     activeQuests.removeWhere((q) => q.id == questId);
@@ -306,7 +313,10 @@ class Campaign {
   }
 
   void failQuest(String questId) {
-    var quest = activeQuests.firstWhere((q) => q.id == questId);
+    var quest = activeQuests.firstWhere(
+      (q) => q.id == questId,
+      orElse: () => throw Exception('Quest not found in active quests'),
+    );
     quest.failQuest();
 
     activeQuests.removeWhere((q) => q.id == questId);
