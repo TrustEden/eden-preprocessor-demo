@@ -192,6 +192,14 @@ class Campaign {
   List<String>? futurePlotHooks;
   Map<String, dynamic>? customData;
 
+  // Multiplayer Support
+  bool isMultiplayer;
+  String? multiplayerSessionId; // Unique session ID for WebSocket connection
+  String? hostPlayerId; // Player ID of the host/DM
+  List<String> connectedPlayerIds; // List of connected player IDs
+  String? currentTurnPlayerId; // For turn-based multiplayer
+  Map<String, String> playerCharacterMap; // playerId -> characterId mapping
+
   Campaign({
     required this.id,
     required this.name,
@@ -221,7 +229,15 @@ class Campaign {
     this.dmNotes,
     this.futurePlotHooks,
     this.customData,
-  })  : timeline = timeline ?? CampaignTimeline(),
+    this.isMultiplayer = false,
+    this.multiplayerSessionId,
+    this.hostPlayerId,
+    List<String>? connectedPlayerIds,
+    this.currentTurnPlayerId,
+    Map<String, String>? playerCharacterMap,
+  })  : connectedPlayerIds = connectedPlayerIds ?? [],
+        playerCharacterMap = playerCharacterMap ?? {},
+        timeline = timeline ?? CampaignTimeline(),
         factions = factions ?? {},
         knownNPCs = knownNPCs ?? [],
         discoveredLocations = discoveredLocations ?? [],
@@ -430,6 +446,12 @@ class Campaign {
         'dmNotes': dmNotes,
         'futurePlotHooks': futurePlotHooks,
         'customData': customData,
+        'isMultiplayer': isMultiplayer,
+        'multiplayerSessionId': multiplayerSessionId,
+        'hostPlayerId': hostPlayerId,
+        'connectedPlayerIds': connectedPlayerIds,
+        'currentTurnPlayerId': currentTurnPlayerId,
+        'playerCharacterMap': playerCharacterMap,
       };
 
   factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
@@ -488,5 +510,11 @@ class Campaign {
         dmNotes: json['dmNotes'] as String?,
         futurePlotHooks: (json['futurePlotHooks'] as List<dynamic>?)?.cast<String>(),
         customData: json['customData'] as Map<String, dynamic>?,
+        isMultiplayer: json['isMultiplayer'] as bool? ?? false,
+        multiplayerSessionId: json['multiplayerSessionId'] as String?,
+        hostPlayerId: json['hostPlayerId'] as String?,
+        connectedPlayerIds: (json['connectedPlayerIds'] as List<dynamic>?)?.cast<String>(),
+        currentTurnPlayerId: json['currentTurnPlayerId'] as String?,
+        playerCharacterMap: (json['playerCharacterMap'] as Map<String, dynamic>?)?.cast<String, String>(),
       );
 }

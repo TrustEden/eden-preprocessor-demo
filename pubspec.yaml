@@ -17,6 +17,17 @@ dependencies:
   provider: ^6.1.0
   uuid: ^4.0.0
   shared_preferences: ^2.2.0
+  # Multiplayer and networking
+  web_socket_channel: ^2.4.0
+  # Voice narration
+  flutter_tts: ^3.8.3
+  # File picker for import/export
+  file_picker: ^6.1.1
+  # Archive for compression
+  archive: ^3.4.10
+  # JSON encoding/decoding (already in dart:convert, but explicit for clarity)
+  # Image caching for portraits
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:

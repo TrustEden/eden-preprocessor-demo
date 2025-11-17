@@ -35,14 +35,239 @@ This Flutter desktop application provides a rich D&D 5e gaming experience where 
 - **Monster Database**: Extensive creature collection for encounters
 - **Magic Items**: Comprehensive magical equipment database
 
+## New Features (Latest Update)
+
+### 🖼️ AI-Generated Character Portraits
+
+Create unique, AI-generated portraits for your characters that match their race, class, and personality!
+
+**Features:**
+- Support for DALL-E and Stable Diffusion APIs
+- Automatic prompt generation based on character attributes
+- Character-specific details (race features, equipment, class aesthetics)
+- Placeholder avatars while portraits generate
+- Portrait caching for performance
+
+**Setup:**
+```dart
+// Configure in settings
+PortraitGenerationService().setApiKey('your-api-key');
+PortraitGenerationService().setProvider('dall-e'); // or 'stable-diffusion'
+
+// Generate portrait for a character
+await PortraitGenerationService().updateCharacterPortrait(character);
+```
+
+**How it Works:**
+1. Character attributes (race, class, equipment, personality) are analyzed
+2. A detailed prompt is generated describing the character's appearance
+3. The prompt is sent to the configured AI image generation API
+4. The generated portrait URL is saved to the character
+5. Portraits are displayed in character sheets and combat screens
+
+### 🎮 Multiplayer Co-op Campaigns
+
+Play with friends in real-time cooperative campaigns!
+
+**Features:**
+- **Real-time Synchronization**: WebSocket-based multiplayer with instant updates
+- **Host/Join System**: One player hosts, others join via session ID
+- **Turn Management**: Coordinated turn-based gameplay
+- **Character Assignment**: Each player controls their own character
+- **Event Broadcasting**: Actions, chat, combat updates shared in real-time
+- **Player List**: See who's connected and their status
+
+**How to Use:**
+```dart
+// Host a session
+String sessionId = await MultiplayerService().hostSession(
+  campaign: campaign,
+  playerName: 'Alice',
+  playerId: 'player-1',
+);
+
+// Join a session
+await MultiplayerService().joinSession(
+  sessionId: sessionId,
+  playerName: 'Bob',
+  playerId: 'player-2',
+  characterId: 'character-id',
+);
+
+// Send game events
+MultiplayerService().broadcastAction(
+  action: 'attack',
+  actionData: {'target': 'goblin-1'},
+);
+```
+
+**Multiplayer Events:**
+- Player joined/left notifications
+- Game state synchronization
+- Chat messages
+- Action broadcasts
+- Turn changes
+- Combat updates
+- Character updates
+- DM responses (from host)
+
+### 🎙️ Voice Narration for DM Responses
+
+Immerse yourself with voice narration for all DM responses!
+
+**Features:**
+- **Local TTS**: Built-in Flutter TTS for offline play
+- **Cloud TTS**: High-quality voices via Google Cloud TTS, Azure, or ElevenLabs
+- **Voice Presets**: Different voices for narrator, characters, creatures, and villains
+- **Voice Settings**: Adjustable pitch, rate, and volume
+- **Playback Controls**: Play, pause, stop narration
+- **Auto-play**: Optional automatic narration of DM responses
+
+**Voice Types:**
+- **Narrator**: Default DM voice (warm, professional)
+- **Male/Female**: Character dialogue voices
+- **Creature**: Deep, menacing voice for monsters
+- **Villain**: Dramatic, threatening voice
+- **Elder**: Older, wise voice for NPCs
+
+**Setup:**
+```dart
+// Initialize TTS
+await TextToSpeechService().initialize();
+
+// Configure cloud TTS (optional)
+TextToSpeechService().setCloudTtsApiKey('api-key', provider: 'google');
+
+// Speak DM narration
+await TextToSpeechService().speak(
+  dmResponse,
+  voiceType: VoiceType.narrator,
+);
+
+// Adjust voice settings
+await TextToSpeechService().updateSettings(VoiceSettings(
+  pitch: 1.0,
+  rate: 0.9,
+  volume: 1.0,
+));
+```
+
+### 🗺️ Enhanced Tactical Map Visualization
+
+Upgraded tactical combat with beautiful, interactive maps!
+
+**Features:**
+- **Interactive Grid**: Click, drag, and drop characters on the map
+- **Zoom & Pan**: Navigate large battlefields with ease
+- **Movement Range Visualization**: See valid movement squares highlighted
+- **Fog of War**: Reveal the map as characters explore
+- **Terrain Rendering**: Visual distinction for different terrain types
+- **Cover Indicators**: Clear visual feedback for cover positions
+- **Selection Highlighting**: Selected character clearly marked
+- **Turn Indicators**: See whose turn it is at a glance
+- **Hover Information**: Tile details and occupancy info on hover
+- **Legend**: Quick reference for terrain and combatant types
+
+**Terrain Types Visualized:**
+- Normal terrain (light gray)
+- Difficult terrain (brown)
+- Blocking terrain (dark gray)
+- Hazards (red)
+- Half cover (light orange)
+- Three-quarters cover (dark orange)
+- Full cover (black)
+- Water (blue)
+- Ice (cyan)
+
+**How to Use:**
+```dart
+TacticalMapWidget(
+  map: tacticalMap,
+  characters: partyCharacters,
+  monsters: enemies,
+  currentTurnCombatantId: currentCombatant,
+  selectedCombatantId: selectedCharacter,
+  showGrid: true,
+  showMovementRange: true,
+  fogOfWarEnabled: true,
+  visibleTiles: calculatedVisibleTiles,
+  onCombatantSelected: (id) => selectCombatant(id),
+  onCombatantMoved: (id, pos) => moveCombatant(id, pos),
+  onTileSelected: (pos) => handleTileClick(pos),
+)
+```
+
+### 📦 Campaign Sharing and Import/Export
+
+Share your epic campaigns with the community!
+
+**Features:**
+- **Multiple Export Formats**:
+  - JSON: Human-readable format
+  - Compressed: Gzip-compressed for smaller file sizes
+  - Package: Full campaign package with assets and README
+- **Campaign Metadata**: Version tracking, author info, ratings
+- **Validation**: Import validation ensures compatibility
+- **Progress Stripping**: Export templates without progress data
+- **Character Export**: Include or exclude party characters
+- **File Management**: View and delete exported campaigns
+
+**Export Options:**
+```dart
+// Export with dialog (user chooses location)
+String? filePath = await CampaignExportService().exportCampaignWithDialog(
+  campaign: campaign,
+  exportedBy: 'YourUsername',
+  format: ExportFormat.compressed,
+  includeCharacters: partyMembers,
+);
+
+// Export programmatically
+String? filePath = await CampaignExportService().exportCampaign(
+  campaign: campaign,
+  exportedBy: 'YourUsername',
+  format: ExportFormat.package,
+  includeProgress: false, // Export as template
+);
+```
+
+**Import:**
+```dart
+// Import with dialog
+CampaignPackage? package = await CampaignExportService().importCampaignWithDialog();
+
+// Validate imported campaign
+ValidationResult result = await CampaignExportService().validateCampaign(package);
+
+if (result.isValid) {
+  // Load the campaign
+  Campaign importedCampaign = package.campaign;
+}
+```
+
+**Export Formats:**
+- `.json` - Plain JSON file (readable, large)
+- `.campaign` - Gzip-compressed JSON (small, fast)
+- `.campaignpack` - ZIP archive with campaign data, README, and assets
+
+**Campaign Package Contents:**
+- `campaign.json` - Full campaign data
+- `README.md` - Campaign information and import instructions
+- Character portraits (if available)
+- Custom maps and assets (future enhancement)
+
+### 🎨 Advanced Features
+- **AI-Generated Character Portraits**: Generate unique character portraits using DALL-E or Stable Diffusion APIs
+- **Multiplayer Co-op Campaigns**: Real-time multiplayer support via WebSocket for cooperative play
+- **Voice Narration**: Text-to-speech for DM responses with multiple voice options and cloud TTS support
+- **Enhanced Tactical Map Visualization**: Interactive grid-based combat with zoom, pan, fog of war, and visual effects
+- **Campaign Sharing**: Import/export campaigns with multiple formats (JSON, compressed, full package)
+
 ### 🔮 Future Enhancements
 - Sound effects and music
-- AI-generated character portraits
-- Multiplayer co-op campaigns
 - Mobile support (iOS and Android)
-- Voice narration for DM responses
-- Enhanced tactical map visualization
-- Campaign sharing and import/export
+- Advanced AI image generation for locations and scenes
+- Campaign marketplace for sharing community creations
 
 ## Tech Stack
 
@@ -50,7 +275,7 @@ This Flutter desktop application provides a rich D&D 5e gaming experience where 
 - **Database**: SQLite (via sqflite_common_ffi for desktop)
 - **AI**: Claude Sonnet 4 API
 - **State Management**: Provider + StatefulWidget
-- **Additional Libraries**: http, uuid, shared_preferences, path_provider
+- **Additional Libraries**: http, uuid, shared_preferences, path_provider, web_socket_channel, flutter_tts, file_picker, archive, cached_network_image
 
 ## Project Structure
 
@@ -73,7 +298,11 @@ lib/
 │   ├── quest_generation.dart         # Dynamic quest creation
 │   ├── procedural_generation.dart    # Dungeon and encounter generation
 │   ├── loot_generator.dart           # Item and treasure generation
-│   └── crafting_system.dart          # Item crafting mechanics
+│   ├── crafting_system.dart          # Item crafting mechanics
+│   ├── portrait_generation_service.dart  # AI portrait generation
+│   ├── multiplayer_service.dart      # Real-time multiplayer via WebSocket
+│   ├── text_to_speech_service.dart   # Voice narration for DM
+│   └── campaign_export_service.dart  # Campaign import/export
 ├── screens/                           # UI screens
 │   ├── home_screen.dart              # Campaign list/new game
 │   ├── character_creation_screen.dart # Character creation wizard
@@ -84,7 +313,8 @@ lib/
 │   ├── character_sheet_widget.dart   # Character stats display
 │   ├── dice_roller_widget.dart       # Interactive dice roller
 │   ├── spell_book_widget.dart        # Spell management
-│   └── quest_journal_widget.dart     # Quest tracking
+│   ├── quest_journal_widget.dart     # Quest tracking
+│   └── tactical_map_widget.dart      # Enhanced tactical map visualization
 └── data/                              # Game content databases
     ├── spell_database.dart            # Spell definitions
     ├── expanded_spell_database.dart   # Extended spell collection

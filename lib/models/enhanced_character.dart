@@ -117,6 +117,11 @@ class EnhancedCharacter {
   String? bond;
   String? flaw;
 
+  // AI-generated portrait
+  String? portraitUrl;
+  String? portraitPrompt;
+  DateTime? portraitGeneratedAt;
+
   EnhancedCharacter({
     required this.id,
     required this.name,
@@ -175,6 +180,9 @@ class EnhancedCharacter {
     this.ideal,
     this.bond,
     this.flaw,
+    this.portraitUrl,
+    this.portraitPrompt,
+    this.portraitGeneratedAt,
   })  : feats = feats ?? [],
         asiIncreases = asiIncreases ?? {},
         inventory = inventory ?? [],
@@ -674,6 +682,9 @@ class EnhancedCharacter {
     'ideal': ideal,
     'bond': bond,
     'flaw': flaw,
+    'portraitUrl': portraitUrl,
+    'portraitPrompt': portraitPrompt,
+    'portraitGeneratedAt': portraitGeneratedAt?.toIso8601String(),
   };
 
   factory EnhancedCharacter.fromJson(Map<String, dynamic> json) {
@@ -757,6 +768,11 @@ class EnhancedCharacter {
       ideal: json['ideal'] as String?,
       bond: json['bond'] as String?,
       flaw: json['flaw'] as String?,
+      portraitUrl: json['portraitUrl'] as String?,
+      portraitPrompt: json['portraitPrompt'] as String?,
+      portraitGeneratedAt: json['portraitGeneratedAt'] != null
+          ? DateTime.parse(json['portraitGeneratedAt'] as String)
+          : null,
     );
     return char;
   }
