@@ -14,37 +14,39 @@ class MagicItems {
   static Item potionOfHealing() => Item(
     id: 'potion_of_healing',
     name: 'Potion of Healing',
-    description: 'You regain 2d4 + 2 hit points when you drink this potion.',
-    type: 'potion',
+    effect: 'heal_2d4+2',
+    type: 'consumable',
+    weight: 1,
     value: 50,
-    healingDice: '2d4+2',
   );
 
   static Item potionOfGreaterHealing() => Item(
     id: 'potion_of_greater_healing',
     name: 'Potion of Greater Healing',
-    description: 'You regain 4d4 + 4 hit points when you drink this potion.',
-    type: 'potion',
+    effect: 'heal_4d4+4',
+    type: 'consumable',
+    weight: 1,
     value: 150,
-    healingDice: '4d4+4',
   );
 
   // Uncommon Magic Items
   static Item weaponPlus1(String weaponType) => Item(
     id: '${weaponType}_plus1',
     name: '+1 $weaponType',
-    description: 'This magic weapon has a +1 bonus to attack and damage rolls.',
+    effect: 'This magic weapon has a +1 bonus to attack and damage rolls.',
     type: 'weapon',
+    weight: 3,
     value: 500,
-    weaponDamage: weaponType == 'Longsword' ? '1d8+1' : '1d6+1',
-    weaponType: 'martial',
+    damageDice: weaponType == 'Longsword' ? '1d8+1' : '1d6+1',
+    damageType: 'martial',
   );
 
   static Item armorPlus1(String armorType) => Item(
     id: '${armorType}_plus1',
     name: '+1 $armorType',
-    description: 'This magic armor has a +1 bonus to AC.',
+    effect: 'This magic armor has a +1 bonus to AC.',
     type: 'armor',
+    weight: 20,
     value: 500,
     armorBonus: armorType == 'Chain Mail' ? 17 : 12,
     armorType: 'medium',
@@ -53,24 +55,25 @@ class MagicItems {
   static Item cloakOfProtection() => Item(
     id: 'cloak_of_protection',
     name: 'Cloak of Protection',
-    description: 'You gain a +1 bonus to AC and saving throws while wearing this cloak.',
-    type: 'wondrous',
+    effect: 'You gain a +1 bonus to AC and saving throws while wearing this cloak.',
+    type: 'misc',
+    weight: 1,
     value: 500,
   );
 
   static Item bootsOfElvenkind() => Item(
     id: 'boots_of_elvenkind',
     name: 'Boots of Elvenkind',
-    description: 'While you wear these boots, your steps make no sound, and you have advantage on Stealth checks that rely on moving silently.',
-    type: 'wondrous',
+    effect: 'While you wear these boots, your steps make no sound, and you have advantage on Stealth checks that rely on moving silently.',
+    type: 'misc',
     value: 500,
   );
 
   static Item bagOfHolding() => Item(
     id: 'bag_of_holding',
     name: 'Bag of Holding',
-    description: 'This bag has an interior space considerably larger than its outside dimensions. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet.',
-    type: 'wondrous',
+    effect: 'This bag has an interior space considerably larger than its outside dimensions. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet.',
+    type: 'misc',
     value: 500,
   );
 
@@ -78,18 +81,20 @@ class MagicItems {
   static Item weaponPlus2(String weaponType) => Item(
     id: '${weaponType}_plus2',
     name: '+2 $weaponType',
-    description: 'This magic weapon has a +2 bonus to attack and damage rolls.',
+    effect: 'This magic weapon has a +2 bonus to attack and damage rolls.',
     type: 'weapon',
+    weight: 3,
     value: 2000,
-    weaponDamage: weaponType == 'Longsword' ? '1d8+2' : '1d6+2',
-    weaponType: 'martial',
+    damageDice: weaponType == 'Longsword' ? '1d8+2' : '1d6+2',
+    damageType: 'martial',
   );
 
   static Item armorPlus2(String armorType) => Item(
     id: '${armorType}_plus2',
     name: '+2 $armorType',
-    description: 'This magic armor has a +2 bonus to AC.',
+    effect: 'This magic armor has a +2 bonus to AC.',
     type: 'armor',
+    weight: 20,
     value: 2000,
     armorBonus: armorType == 'Chain Mail' ? 18 : 13,
     armorType: 'medium',
@@ -98,26 +103,28 @@ class MagicItems {
   static Item ringOfProtection() => Item(
     id: 'ring_of_protection',
     name: 'Ring of Protection',
-    description: 'You gain a +1 bonus to AC and saving throws while wearing this ring.',
-    type: 'ring',
+    effect: 'You gain a +1 bonus to AC and saving throws while wearing this ring.',
+    type: 'misc',
+    weight: 1,
     value: 2000,
   );
 
   static Item flameTounge() => Item(
     id: 'flame_tongue',
     name: 'Flame Tongue',
-    description: 'You can use a bonus action to cause flames to erupt from the blade. While the sword is ablaze, it deals an extra 2d6 fire damage.',
+    effect: 'You can use a bonus action to cause flames to erupt from the blade. While the sword is ablaze, it deals an extra 2d6 fire damage.',
     type: 'weapon',
     value: 5000,
-    weaponDamage: '1d8',
-    weaponType: 'martial',
+    damageDice: '1d8',
+    damageType: 'martial',
   );
 
   static Item wandOfFireballs() => Item(
     id: 'wand_of_fireballs',
     name: 'Wand of Fireballs',
-    description: 'This wand has 7 charges. You can expend charges to cast fireball (save DC 15). The wand regains 1d6 + 1 charges daily at dawn.',
-    type: 'wand',
+    effect: 'This wand has 7 charges. You can expend charges to cast fireball (save DC 15). The wand regains 1d6 + 1 charges daily at dawn.',
+    type: 'misc',
+    weight: 1,
     value: 8000,
   );
 
@@ -125,18 +132,20 @@ class MagicItems {
   static Item weaponPlus3(String weaponType) => Item(
     id: '${weaponType}_plus3',
     name: '+3 $weaponType',
-    description: 'This magic weapon has a +3 bonus to attack and damage rolls.',
+    effect: 'This magic weapon has a +3 bonus to attack and damage rolls.',
     type: 'weapon',
+    weight: 3,
     value: 10000,
-    weaponDamage: weaponType == 'Longsword' ? '1d8+3' : '1d6+3',
-    weaponType: 'martial',
+    damageDice: weaponType == 'Longsword' ? '1d8+3' : '1d6+3',
+    damageType: 'martial',
   );
 
   static Item armorPlus3(String armorType) => Item(
     id: '${armorType}_plus3',
     name: '+3 $armorType',
-    description: 'This magic armor has a +3 bonus to AC.',
+    effect: 'This magic armor has a +3 bonus to AC.',
     type: 'armor',
+    weight: 20,
     value: 10000,
     armorBonus: armorType == 'Chain Mail' ? 19 : 14,
     armorType: 'medium',
@@ -145,16 +154,16 @@ class MagicItems {
   static Item staffOfPower() => Item(
     id: 'staff_of_power',
     name: 'Staff of Power',
-    description: 'This staff grants a +2 bonus to AC, saving throws, and spell attack rolls. It has 20 charges and can cast many powerful spells.',
-    type: 'staff',
+    effect: 'This staff grants a +2 bonus to AC, saving throws, and spell attack rolls. It has 20 charges and can cast many powerful spells.',
+    type: 'misc',
     value: 50000,
   );
 
   static Item beltOfGiantStrength() => Item(
     id: 'belt_of_giant_strength',
     name: 'Belt of Giant Strength',
-    description: 'While wearing this belt, your Strength score changes to 27.',
-    type: 'wondrous',
+    effect: 'While wearing this belt, your Strength score changes to 27.',
+    type: 'misc',
     value: 20000,
   );
 
@@ -162,36 +171,37 @@ class MagicItems {
   static Item holyAvenger() => Item(
     id: 'holy_avenger',
     name: 'Holy Avenger',
-    description: 'This legendary longsword grants a +3 bonus and deals extra radiant damage to fiends and undead. Requires attunement by a paladin.',
+    effect: 'This legendary longsword grants a +3 bonus and deals extra radiant damage to fiends and undead. Requires attunement by a paladin.',
     type: 'weapon',
+    weight: 3,
     value: 100000,
-    weaponDamage: '1d8+3',
-    weaponType: 'martial',
+    damageDice: '1d8+3',
+    damageType: 'martial',
   );
 
   static Item vorpalSword() => Item(
     id: 'vorpal_sword',
     name: 'Vorpal Sword',
-    description: 'This legendary sword has a +3 bonus. On a roll of 20, it severs the target\'s head.',
+    effect: 'This legendary sword has a +3 bonus. On a roll of 20, it severs the target\'s head.',
     type: 'weapon',
     value: 150000,
-    weaponDamage: '1d8+3',
-    weaponType: 'martial',
+    damageDice: '1d8+3',
+    damageType: 'martial',
   );
 
   static Item robeOfTheArchmagi() => Item(
     id: 'robe_of_the_archmagi',
     name: 'Robe of the Archmagi',
-    description: 'This robe grants AC 15 + Dex mod, advantage on saves vs. spells, and increases spell save DC and attack bonus by 2.',
-    type: 'wondrous',
+    effect: 'This robe grants AC 15 + Dex mod, advantage on saves vs. spells, and increases spell save DC and attack bonus by 2.',
+    type: 'misc',
     value: 100000,
   );
 
   static Item ringOfThreeWishes() => Item(
     id: 'ring_of_three_wishes',
     name: 'Ring of Three Wishes',
-    description: 'This ring has 3 charges, each allowing you to cast the wish spell.',
-    type: 'ring',
+    effect: 'This ring has 3 charges, each allowing you to cast the wish spell.',
+    type: 'misc',
     value: 500000,
   );
 

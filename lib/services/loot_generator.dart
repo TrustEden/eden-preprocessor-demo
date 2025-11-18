@@ -253,7 +253,7 @@ class LootGenerator {
     return Item(
       id: 'gem_${name.toLowerCase().replaceAll(' ', '_')}',
       name: name,
-      description: 'A valuable gemstone.',
+      effect: 'A valuable gemstone.',
       type: 'gem',
       value: value,
     );
@@ -293,7 +293,7 @@ class LootGenerator {
     return Item(
       id: 'art_${name.toLowerCase().replaceAll(' ', '_')}',
       name: name,
-      description: 'A valuable art object.',
+      effect: 'A valuable art object.',
       type: 'art',
       value: value,
     );
@@ -435,7 +435,7 @@ class LootGenerator {
     return Item(
       id: 'random_${type}_${_rng.nextInt(10000)}',
       name: 'Random $type',
-      description: 'A random item.',
+      effect: 'A random item.',
       type: type,
       value: targetValue,
     );
@@ -460,7 +460,7 @@ class LootGenerator {
       loot.add(Item(
         id: 'currency_${DateTime.now().millisecondsSinceEpoch}',
         name: '${hoard.goldPieces} Gold, ${hoard.platinumPieces} Platinum',
-        description: 'Currency from treasure hoard',
+        effect: 'Currency from treasure hoard',
         type: 'currency',
         value: hoard.totalValueInGold,
       ));
