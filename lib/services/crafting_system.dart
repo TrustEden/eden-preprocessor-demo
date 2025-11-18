@@ -357,7 +357,7 @@ class CraftingSystem {
         resultItem: recipe.resultItem,
         daysSpent: recipe.craftingDays,
         goldSpent: recipe.goldCost,
-        hasF law: true,
+        hasFlaw: true,
       );
     } else {
       // Failure - materials lost
@@ -365,7 +365,7 @@ class CraftingSystem {
         success: false,
         message: 'You fail to craft ${recipe.name}. Materials are lost.',
         daysSpent: recipe.craftingDays,
-        goldSpent: recipe.goldCost ~/  2, // Half materials wasted
+        goldSpent: recipe.goldCost ~/ 2, // Half materials wasted
       );
     }
   }

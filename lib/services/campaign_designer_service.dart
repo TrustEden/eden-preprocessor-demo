@@ -217,7 +217,7 @@ class CampaignDesignerService {
     if (campaign == null) throw Exception('Campaign not found');
 
     final quest = campaign.quests.firstWhere((q) => q.id == questId);
-    final objective = QuestObjective(
+    final objective = QuestObjectiveTemplate(
       id: _uuid.v4(),
       description: description,
       type: type,
