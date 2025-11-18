@@ -85,7 +85,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfHealingRecipe() => CraftingRecipe(
         id: 'craft_potion_healing',
         name: 'Craft Potion of Healing',
-        description: 'Brew a basic healing potion that restores 2d4+2 HP.',
+        effect: 'Brew a basic healing potion that restores 2d4+2 HP.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.easy,
         requiredLevel: 3,
@@ -102,7 +102,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfGreaterHealingRecipe() => CraftingRecipe(
         id: 'craft_potion_greater_healing',
         name: 'Craft Potion of Greater Healing',
-        description: 'Brew a potent healing potion that restores 4d4+4 HP.',
+        effect: 'Brew a potent healing potion that restores 4d4+4 HP.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -120,7 +120,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfInvisibilityRecipe() => CraftingRecipe(
         id: 'craft_potion_invisibility',
         name: 'Craft Potion of Invisibility',
-        description: 'Create a potion that grants invisibility for 1 hour.',
+        effect: 'Create a potion that grants invisibility for 1 hour.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.hard,
         requiredLevel: 7,
@@ -135,8 +135,9 @@ class CraftingSystem {
         resultItem: Item(
           id: 'potion_invisibility',
           name: 'Potion of Invisibility',
-          description: 'Become invisible for 1 hour.',
-          type: 'potion',
+          effect: 'Become invisible for 1 hour.',
+          type: 'consumable',
+          weight: 1,
           value: 500,
         ),
       );
@@ -167,7 +168,7 @@ class CraftingSystem {
     return CraftingRecipe(
       id: 'craft_scroll_${spell.id}',
       name: 'Scribe Spell Scroll (${spell.name})',
-      description: 'Create a spell scroll containing ${spell.name}.',
+      effect: 'Create a spell scroll containing ${spell.name}.',
       type: CraftingType.scroll,
       difficulty: difficulty,
       requiredLevel: max(1, spellLevel),
@@ -182,8 +183,8 @@ class CraftingSystem {
       resultItem: Item(
         id: 'scroll_${spell.id}',
         name: 'Spell Scroll (${spell.name})',
-        description: 'A scroll containing the ${spell.name} spell.',
-        type: 'scroll',
+        effect: 'A scroll containing the ${spell.name} spell.',
+        type: 'consumable',
         value: baseCost * 2,
       ),
     );
@@ -194,7 +195,7 @@ class CraftingSystem {
   static CraftingRecipe weaponPlus1Recipe(String weaponType) => CraftingRecipe(
         id: 'craft_weapon_plus1_${weaponType.toLowerCase()}',
         name: 'Forge +1 $weaponType',
-        description: 'Create a masterwork $weaponType with a +1 magical bonus.',
+        effect: 'Create a masterwork $weaponType with a +1 magical bonus.',
         type: CraftingType.weapon,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -213,7 +214,7 @@ class CraftingSystem {
   static CraftingRecipe armorPlus1Recipe(String armorType) => CraftingRecipe(
         id: 'craft_armor_plus1_${armorType.toLowerCase()}',
         name: 'Forge +1 $armorType',
-        description: 'Create masterwork $armorType with a +1 magical bonus.',
+        effect: 'Create masterwork $armorType with a +1 magical bonus.',
         type: CraftingType.armor,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -233,7 +234,7 @@ class CraftingSystem {
   static CraftingRecipe bagOfHoldingRecipe() => CraftingRecipe(
         id: 'craft_bag_of_holding',
         name: 'Create Bag of Holding',
-        description: 'Enchant a bag to hold far more than its size suggests.',
+        effect: 'Enchant a bag to hold far more than its size suggests.',
         type: CraftingType.wondrous,
         difficulty: CraftingDifficulty.hard,
         requiredLevel: 7,
@@ -252,7 +253,7 @@ class CraftingSystem {
   static CraftingRecipe cloakOfProtectionRecipe() => CraftingRecipe(
         id: 'craft_cloak_protection',
         name: 'Create Cloak of Protection',
-        description: 'Weave a magical cloak that grants +1 to AC and saves.',
+        effect: 'Weave a magical cloak that grants +1 to AC and saves.',
         type: CraftingType.wondrous,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -272,7 +273,7 @@ class CraftingSystem {
   static CraftingRecipe silverArrowsRecipe() => CraftingRecipe(
         id: 'craft_silver_arrows',
         name: 'Craft Silver Arrows',
-        description: 'Create arrows tipped with silver, effective against lycanthropes.',
+        effect: 'Create arrows tipped with silver, effective against lycanthropes.',
         type: CraftingType.ammunition,
         difficulty: CraftingDifficulty.easy,
         requiredLevel: 1,
@@ -287,7 +288,7 @@ class CraftingSystem {
         resultItem: Item(
           id: 'silver_arrows',
           name: 'Silver Arrows (20)',
-          description: '20 arrows tipped with silver. Effective against lycanthropes.',
+          effect: '20 arrows tipped with silver. Effective against lycanthropes.',
           type: 'ammunition',
           value: 100,
         ),

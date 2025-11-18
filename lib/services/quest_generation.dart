@@ -426,6 +426,7 @@ class QuestGenerator {
       ),
       bonusReward: QuestReward(
         experiencePoints: partyLevel * 35,
+        goldPieces: partyLevel * 25,
         items: [_generateMagicItem(partyLevel ~/ 2)],
       ),
       loreBackground: '$location was thought to be a myth until recent excavations revealed its entrance.',
