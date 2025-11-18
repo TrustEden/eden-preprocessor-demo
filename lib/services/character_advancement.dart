@@ -124,8 +124,8 @@ class CharacterAdvancement {
 
     // Apply level up
     character.level = newLevel;
-    character.hitPointsMax += hpGain;
-    character.hitPointsCurrent += hpGain;
+    character.hpMax += hpGain;
+    character.hpCurrent += hpGain;
 
     if (newSlots != null) {
       character.spellSlots = newSlots;
@@ -170,26 +170,32 @@ class CharacterAdvancement {
   ) {
     switch (ability.toLowerCase()) {
       case 'strength':
-        character.strength = min(20, character.strength + increase);
+        character.baseStrength = min(20, character.baseStrength + increase);
+        character.asiIncreases['Strength'] = (character.asiIncreases['Strength'] ?? 0) + increase;
         break;
       case 'dexterity':
-        character.dexterity = min(20, character.dexterity + increase);
+        character.baseDexterity = min(20, character.baseDexterity + increase);
+        character.asiIncreases['Dexterity'] = (character.asiIncreases['Dexterity'] ?? 0) + increase;
         break;
       case 'constitution':
-        character.constitution = min(20, character.constitution + increase);
+        character.baseConstitution = min(20, character.baseConstitution + increase);
+        character.asiIncreases['Constitution'] = (character.asiIncreases['Constitution'] ?? 0) + increase;
         // Recalculate HP when constitution increases
         int conBonus = _getAbilityModifier(character.constitution);
-        character.hitPointsMax += conBonus * character.level;
-        character.hitPointsCurrent += conBonus * character.level;
+        character.hpMax += conBonus * character.level;
+        character.hpCurrent += conBonus * character.level;
         break;
       case 'intelligence':
-        character.intelligence = min(20, character.intelligence + increase);
+        character.baseIntelligence = min(20, character.baseIntelligence + increase);
+        character.asiIncreases['Intelligence'] = (character.asiIncreases['Intelligence'] ?? 0) + increase;
         break;
       case 'wisdom':
-        character.wisdom = min(20, character.wisdom + increase);
+        character.baseWisdom = min(20, character.baseWisdom + increase);
+        character.asiIncreases['Wisdom'] = (character.asiIncreases['Wisdom'] ?? 0) + increase;
         break;
       case 'charisma':
-        character.charisma = min(20, character.charisma + increase);
+        character.baseCharisma = min(20, character.baseCharisma + increase);
+        character.asiIncreases['Charisma'] = (character.asiIncreases['Charisma'] ?? 0) + increase;
         break;
     }
   }

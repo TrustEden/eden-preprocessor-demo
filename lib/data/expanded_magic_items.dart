@@ -262,11 +262,10 @@ class ExpandedMagicItems {
   static Item potionOfSuperiorHealing() => Item(
     id: 'potion_of_superior_healing',
     name: 'Potion of Superior Healing',
-    effect: 'You regain 8d4 + 8 hit points when you drink this potion.',
+    effect: '8d4+8',
     type: 'consumable',
     weight: 1,
     value: 500,
-    effect: '8d4+8',
   );
 
   static Item potionOfHeroism() => Item(
@@ -703,8 +702,6 @@ class ExpandedMagicItems {
       case ItemRarity.artifact:
         items = getArtifactItems();
         break;
-      default:
-        items = getCommonItems();
     }
 
     if (items.isEmpty) return null;

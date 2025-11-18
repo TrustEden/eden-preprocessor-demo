@@ -202,56 +202,15 @@ class _SpellBookWidgetState extends State<SpellBookWidget> {
 
   int _getMaxSlotsForLevel(int level) {
     if (widget.character.spellSlots == null) return 0;
-
-    switch (level) {
-      case 1:
-        return widget.character.spellSlots!.level1;
-      case 2:
-        return widget.character.spellSlots!.level2;
-      case 3:
-        return widget.character.spellSlots!.level3;
-      case 4:
-        return widget.character.spellSlots!.level4;
-      case 5:
-        return widget.character.spellSlots!.level5;
-      case 6:
-        return widget.character.spellSlots!.level6;
-      case 7:
-        return widget.character.spellSlots!.level7;
-      case 8:
-        return widget.character.spellSlots!.level8;
-      case 9:
-        return widget.character.spellSlots!.level9;
-      default:
-        return 0;
-    }
+    return widget.character.spellSlots!.maxSlots[level] ?? 0;
   }
 
   int _getUsedSlotsForLevel(int level) {
     if (widget.character.spellSlots == null) return 0;
 
-    switch (level) {
-      case 1:
-        return widget.character.spellSlots!.level1Used;
-      case 2:
-        return widget.character.spellSlots!.level2Used;
-      case 3:
-        return widget.character.spellSlots!.level3Used;
-      case 4:
-        return widget.character.spellSlots!.level4Used;
-      case 5:
-        return widget.character.spellSlots!.level5Used;
-      case 6:
-        return widget.character.spellSlots!.level6Used;
-      case 7:
-        return widget.character.spellSlots!.level7Used;
-      case 8:
-        return widget.character.spellSlots!.level8Used;
-      case 9:
-        return widget.character.spellSlots!.level9Used;
-      default:
-        return 0;
-    }
+    int maxSlots = widget.character.spellSlots!.maxSlots[level] ?? 0;
+    int currentSlots = widget.character.spellSlots!.currentSlots[level] ?? 0;
+    return maxSlots - currentSlots;
   }
 
   Widget _buildSearchBar() {
@@ -499,17 +458,6 @@ class _SpellBookWidgetState extends State<SpellBookWidget> {
                   spell.description,
                   style: const TextStyle(fontSize: 14),
                 ),
-                if (spell.higherLevels != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    'At Higher Levels: ${spell.higherLevels}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                ],
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -646,56 +594,15 @@ class _CastSpellDialogState extends State<_CastSpellDialog> {
 
   int _getMaxSlotsForLevel(int level) {
     if (widget.character.spellSlots == null) return 0;
-
-    switch (level) {
-      case 1:
-        return widget.character.spellSlots!.level1;
-      case 2:
-        return widget.character.spellSlots!.level2;
-      case 3:
-        return widget.character.spellSlots!.level3;
-      case 4:
-        return widget.character.spellSlots!.level4;
-      case 5:
-        return widget.character.spellSlots!.level5;
-      case 6:
-        return widget.character.spellSlots!.level6;
-      case 7:
-        return widget.character.spellSlots!.level7;
-      case 8:
-        return widget.character.spellSlots!.level8;
-      case 9:
-        return widget.character.spellSlots!.level9;
-      default:
-        return 0;
-    }
+    return widget.character.spellSlots!.maxSlots[level] ?? 0;
   }
 
   int _getUsedSlotsForLevel(int level) {
     if (widget.character.spellSlots == null) return 0;
 
-    switch (level) {
-      case 1:
-        return widget.character.spellSlots!.level1Used;
-      case 2:
-        return widget.character.spellSlots!.level2Used;
-      case 3:
-        return widget.character.spellSlots!.level3Used;
-      case 4:
-        return widget.character.spellSlots!.level4Used;
-      case 5:
-        return widget.character.spellSlots!.level5Used;
-      case 6:
-        return widget.character.spellSlots!.level6Used;
-      case 7:
-        return widget.character.spellSlots!.level7Used;
-      case 8:
-        return widget.character.spellSlots!.level8Used;
-      case 9:
-        return widget.character.spellSlots!.level9Used;
-      default:
-        return 0;
-    }
+    int maxSlots = widget.character.spellSlots!.maxSlots[level] ?? 0;
+    int currentSlots = widget.character.spellSlots!.currentSlots[level] ?? 0;
+    return maxSlots - currentSlots;
   }
 
   @override
@@ -771,20 +678,6 @@ class _CastSpellDialogState extends State<_CastSpellDialog> {
               );
             }).toList(),
           ),
-          if (widget.spell.higherLevels != null && _selectedLevel > widget.spell.level) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'At Higher Levels: ${widget.spell.higherLevels}',
-                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
         ],
       ),
       actions: [

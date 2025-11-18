@@ -66,6 +66,7 @@ class MagicItems {
     name: 'Boots of Elvenkind',
     effect: 'While you wear these boots, your steps make no sound, and you have advantage on Stealth checks that rely on moving silently.',
     type: 'misc',
+    weight: 1,
     value: 500,
   );
 
@@ -74,6 +75,7 @@ class MagicItems {
     name: 'Bag of Holding',
     effect: 'This bag has an interior space considerably larger than its outside dimensions. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet.',
     type: 'misc',
+    weight: 1,
     value: 500,
   );
 
@@ -114,6 +116,7 @@ class MagicItems {
     name: 'Flame Tongue',
     effect: 'You can use a bonus action to cause flames to erupt from the blade. While the sword is ablaze, it deals an extra 2d6 fire damage.',
     type: 'weapon',
+    weight: 3,
     value: 5000,
     damageDice: '1d8',
     damageType: 'martial',
@@ -156,6 +159,7 @@ class MagicItems {
     name: 'Staff of Power',
     effect: 'This staff grants a +2 bonus to AC, saving throws, and spell attack rolls. It has 20 charges and can cast many powerful spells.',
     type: 'misc',
+    weight: 4,
     value: 50000,
   );
 
@@ -164,6 +168,7 @@ class MagicItems {
     name: 'Belt of Giant Strength',
     effect: 'While wearing this belt, your Strength score changes to 27.',
     type: 'misc',
+    weight: 1,
     value: 20000,
   );
 
@@ -184,6 +189,7 @@ class MagicItems {
     name: 'Vorpal Sword',
     effect: 'This legendary sword has a +3 bonus. On a roll of 20, it severs the target\'s head.',
     type: 'weapon',
+    weight: 3,
     value: 150000,
     damageDice: '1d8+3',
     damageType: 'martial',
@@ -194,6 +200,7 @@ class MagicItems {
     name: 'Robe of the Archmagi',
     effect: 'This robe grants AC 15 + Dex mod, advantage on saves vs. spells, and increases spell save DC and attack bonus by 2.',
     type: 'misc',
+    weight: 1,
     value: 100000,
   );
 
@@ -202,6 +209,7 @@ class MagicItems {
     name: 'Ring of Three Wishes',
     effect: 'This ring has 3 charges, each allowing you to cast the wish spell.',
     type: 'misc',
+    weight: 1,
     value: 500000,
   );
 

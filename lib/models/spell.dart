@@ -302,6 +302,8 @@ class ConcentrationManager {
   Spell? concentrationSpell;
   int? concentrationStartRound;
 
+  ConcentrationManager({this.concentrationSpell, this.concentrationStartRound});
+
   bool startConcentration(Spell spell, int currentRound) {
     if (concentrationSpell != null) {
       // Must break existing concentration

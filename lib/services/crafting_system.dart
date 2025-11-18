@@ -85,7 +85,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfHealingRecipe() => CraftingRecipe(
         id: 'craft_potion_healing',
         name: 'Craft Potion of Healing',
-        effect: 'Brew a basic healing potion that restores 2d4+2 HP.',
+        description: 'Brew a basic healing potion that restores 2d4+2 HP.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.easy,
         requiredLevel: 3,
@@ -102,7 +102,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfGreaterHealingRecipe() => CraftingRecipe(
         id: 'craft_potion_greater_healing',
         name: 'Craft Potion of Greater Healing',
-        effect: 'Brew a potent healing potion that restores 4d4+4 HP.',
+        description: 'Brew a potent healing potion that restores 4d4+4 HP.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -120,7 +120,7 @@ class CraftingSystem {
   static CraftingRecipe potionOfInvisibilityRecipe() => CraftingRecipe(
         id: 'craft_potion_invisibility',
         name: 'Craft Potion of Invisibility',
-        effect: 'Create a potion that grants invisibility for 1 hour.',
+        description: 'Create a potion that grants invisibility for 1 hour.',
         type: CraftingType.potion,
         difficulty: CraftingDifficulty.hard,
         requiredLevel: 7,
@@ -168,7 +168,7 @@ class CraftingSystem {
     return CraftingRecipe(
       id: 'craft_scroll_${spell.id}',
       name: 'Scribe Spell Scroll (${spell.name})',
-      effect: 'Create a spell scroll containing ${spell.name}.',
+      description: 'Create a spell scroll containing ${spell.name}.',
       type: CraftingType.scroll,
       difficulty: difficulty,
       requiredLevel: max(1, spellLevel),
@@ -185,6 +185,7 @@ class CraftingSystem {
         name: 'Spell Scroll (${spell.name})',
         effect: 'A scroll containing the ${spell.name} spell.',
         type: 'consumable',
+        weight: 0,
         value: baseCost * 2,
       ),
     );
@@ -195,7 +196,7 @@ class CraftingSystem {
   static CraftingRecipe weaponPlus1Recipe(String weaponType) => CraftingRecipe(
         id: 'craft_weapon_plus1_${weaponType.toLowerCase()}',
         name: 'Forge +1 $weaponType',
-        effect: 'Create a masterwork $weaponType with a +1 magical bonus.',
+        description: 'Create a masterwork $weaponType with a +1 magical bonus.',
         type: CraftingType.weapon,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -214,7 +215,7 @@ class CraftingSystem {
   static CraftingRecipe armorPlus1Recipe(String armorType) => CraftingRecipe(
         id: 'craft_armor_plus1_${armorType.toLowerCase()}',
         name: 'Forge +1 $armorType',
-        effect: 'Create masterwork $armorType with a +1 magical bonus.',
+        description: 'Create masterwork $armorType with a +1 magical bonus.',
         type: CraftingType.armor,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -234,7 +235,7 @@ class CraftingSystem {
   static CraftingRecipe bagOfHoldingRecipe() => CraftingRecipe(
         id: 'craft_bag_of_holding',
         name: 'Create Bag of Holding',
-        effect: 'Enchant a bag to hold far more than its size suggests.',
+        description: 'Enchant a bag to hold far more than its size suggests.',
         type: CraftingType.wondrous,
         difficulty: CraftingDifficulty.hard,
         requiredLevel: 7,
@@ -253,7 +254,7 @@ class CraftingSystem {
   static CraftingRecipe cloakOfProtectionRecipe() => CraftingRecipe(
         id: 'craft_cloak_protection',
         name: 'Create Cloak of Protection',
-        effect: 'Weave a magical cloak that grants +1 to AC and saves.',
+        description: 'Weave a magical cloak that grants +1 to AC and saves.',
         type: CraftingType.wondrous,
         difficulty: CraftingDifficulty.medium,
         requiredLevel: 5,
@@ -273,7 +274,7 @@ class CraftingSystem {
   static CraftingRecipe silverArrowsRecipe() => CraftingRecipe(
         id: 'craft_silver_arrows',
         name: 'Craft Silver Arrows',
-        effect: 'Create arrows tipped with silver, effective against lycanthropes.',
+        description: 'Create arrows tipped with silver, effective against lycanthropes.',
         type: CraftingType.ammunition,
         difficulty: CraftingDifficulty.easy,
         requiredLevel: 1,
@@ -290,6 +291,7 @@ class CraftingSystem {
           name: 'Silver Arrows (20)',
           effect: '20 arrows tipped with silver. Effective against lycanthropes.',
           type: 'ammunition',
+          weight: 1,
           value: 100,
         ),
       );
