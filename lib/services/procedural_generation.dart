@@ -35,7 +35,7 @@ class DungeonRoom {
 
   factory DungeonRoom.fromJson(Map<String, dynamic> json) => DungeonRoom(
         id: json['id'] as String,
-        effect: json['description'] as String,
+        description: json['description'] as String,
         monsters: (json['monsters'] as List<dynamic>)
             .map((m) => Monster.fromJson(m as Map<String, dynamic>))
             .toList(),
@@ -188,7 +188,7 @@ class DungeonGenerator {
 
     return DungeonRoom(
       id: 'room_$index',
-      effect: description,
+      description: description,
       monsters: monsters,
       treasure: treasure,
       roomType: roomType,
@@ -305,6 +305,7 @@ class DungeonGenerator {
       name: 'Gold Coins',
       effect: '$goldAmount gold pieces',
       type: 'currency',
+      weight: 0,
       value: goldAmount,
     ));
 
@@ -314,10 +315,10 @@ class DungeonGenerator {
       treasure.add(Item(
         id: 'potion_healing_${DateTime.now().millisecondsSinceEpoch}',
         name: 'Potion of Healing',
-        effect: 'Restores 2d4+2 hit points',
-        type: 'consumable',
-        value: 50,
         effect: '2d4+2',
+        type: 'consumable',
+        weight: 1,
+        value: 50,
       ));
     }
 
@@ -328,6 +329,7 @@ class DungeonGenerator {
         name: '+1 Longsword',
         effect: 'A finely crafted longsword with a +1 bonus',
         type: 'weapon',
+        weight: 3,
         value: 500,
         damageDice: '1d8+1',
         damageType: 'martial',

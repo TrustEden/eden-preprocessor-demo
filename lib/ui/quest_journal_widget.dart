@@ -44,7 +44,7 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
       widget.quests.where((q) => q.status == QuestStatus.active).toList();
 
   List<Quest> get _availableQuests =>
-      widget.quests.where((q) => q.status == QuestStatus.available).toList();
+      widget.quests.where((q) => q.status == QuestStatus.notStarted).toList();
 
   List<Quest> get _completedQuests =>
       widget.quests.where((q) => q.status == QuestStatus.completed).toList();
@@ -106,7 +106,7 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
               controller: _tabController,
               children: [
                 _buildQuestList(_getFilteredQuests(_activeQuests), QuestStatus.active),
-                _buildQuestList(_getFilteredQuests(_availableQuests), QuestStatus.available),
+                _buildQuestList(_getFilteredQuests(_availableQuests), QuestStatus.notStarted),
                 _buildQuestList(_getFilteredQuests(_completedQuests), QuestStatus.completed),
                 _buildQuestList(_getFilteredQuests(_failedQuests), QuestStatus.failed),
               ],
@@ -175,10 +175,6 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
     if (type == null) return Colors.grey.shade300;
 
     switch (type) {
-      case QuestType.mainStory:
-        return Colors.purple.shade200;
-      case QuestType.sideQuest:
-        return Colors.blue.shade200;
       case QuestType.kill:
         return Colors.red.shade200;
       case QuestType.fetch:
@@ -189,11 +185,15 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
         return Colors.cyan.shade200;
       case QuestType.rescue:
         return Colors.pink.shade200;
-      case QuestType.bounty:
+      case QuestType.delivery:
         return Colors.brown.shade200;
-      case QuestType.exploration:
+      case QuestType.explore:
         return Colors.teal.shade200;
-      case QuestType.crafting:
+      case QuestType.defend:
+        return Colors.purple.shade200;
+      case QuestType.persuade:
+        return Colors.blue.shade200;
+      case QuestType.puzzle:
         return Colors.amber.shade200;
     }
   }
@@ -221,7 +221,7 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
         message = 'No active quests';
         icon = Icons.assignment_outlined;
         break;
-      case QuestStatus.available:
+      case QuestStatus.notStarted:
         message = 'No available quests';
         icon = Icons.announcement_outlined;
         break;
@@ -364,7 +364,7 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
 
   Color _getQuestStatusColor(QuestStatus status) {
     switch (status) {
-      case QuestStatus.available:
+      case QuestStatus.notStarted:
         return Colors.blue;
       case QuestStatus.active:
         return Colors.orange;
@@ -377,10 +377,6 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
 
   IconData _getQuestIcon(QuestType type) {
     switch (type) {
-      case QuestType.mainStory:
-        return Icons.auto_stories;
-      case QuestType.sideQuest:
-        return Icons.explore;
       case QuestType.kill:
         return Icons.dangerous;
       case QuestType.fetch:
@@ -391,21 +387,21 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
         return Icons.search;
       case QuestType.rescue:
         return Icons.health_and_safety;
-      case QuestType.bounty:
-        return Icons.gavel;
-      case QuestType.exploration:
+      case QuestType.delivery:
+        return Icons.local_shipping;
+      case QuestType.explore:
         return Icons.map;
-      case QuestType.crafting:
-        return Icons.construction;
+      case QuestType.defend:
+        return Icons.shield;
+      case QuestType.persuade:
+        return Icons.forum;
+      case QuestType.puzzle:
+        return Icons.extension;
     }
   }
 
   String _formatQuestType(QuestType type) {
     switch (type) {
-      case QuestType.mainStory:
-        return 'Main Story';
-      case QuestType.sideQuest:
-        return 'Side Quest';
       case QuestType.kill:
         return 'Kill Quest';
       case QuestType.fetch:
@@ -416,12 +412,16 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
         return 'Investigation';
       case QuestType.rescue:
         return 'Rescue Mission';
-      case QuestType.bounty:
-        return 'Bounty';
-      case QuestType.exploration:
+      case QuestType.delivery:
+        return 'Delivery Quest';
+      case QuestType.explore:
         return 'Exploration';
-      case QuestType.crafting:
-        return 'Crafting Quest';
+      case QuestType.defend:
+        return 'Defense Quest';
+      case QuestType.persuade:
+        return 'Persuasion Quest';
+      case QuestType.puzzle:
+        return 'Puzzle Quest';
     }
   }
 
@@ -480,21 +480,21 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
                         : Colors.black,
                   ),
                 ),
-                if (objective.targetCount != null &&
-                    objective.currentCount != null)
+                if (objective.targetMonsterCount != null &&
+                    objective.currentMonsterCount != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: LinearProgressIndicator(
-                      value: objective.currentCount! / objective.targetCount!,
+                      value: objective.currentMonsterCount! / objective.targetMonsterCount!,
                       backgroundColor: Colors.grey.shade300,
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                       minHeight: 6,
                     ),
                   ),
-                if (objective.targetCount != null &&
-                    objective.currentCount != null)
+                if (objective.targetMonsterCount != null &&
+                    objective.currentMonsterCount != null)
                   Text(
-                    '${objective.currentCount}/${objective.targetCount}',
+                    '${objective.currentMonsterCount}/${objective.targetMonsterCount}',
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
               ],
@@ -582,8 +582,8 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
             '${quest.mainReward.items.length} items',
             Colors.blue,
           ),
-        if (quest.mainReward.reputationGains.isNotEmpty)
-          for (var entry in quest.mainReward.reputationGains.entries)
+        if (quest.mainReward.reputationChange.isNotEmpty)
+          for (var entry in quest.mainReward.reputationChange.entries)
             _buildRewardRow(
               Icons.favorite,
               '+${entry.value} ${entry.key} reputation',
@@ -610,7 +610,7 @@ class _QuestJournalWidgetState extends State<QuestJournalWidget>
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (quest.status == QuestStatus.available)
+        if (quest.status == QuestStatus.notStarted)
           ElevatedButton.icon(
             onPressed: () {
               widget.onQuestAccept?.call(quest);

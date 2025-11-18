@@ -54,12 +54,12 @@ class TreasureHoard {
   int get totalValueInGold {
     return goldPieces +
         (platinumPieces * 10) +
-        (electrumPieces ~/ 2) +
-        (silverPieces ~/ 10) +
-        (copperPieces ~/ 100) +
-        items.fold(0, (sum, item) => sum + item.value) +
-        gems.fold(0, (sum, gem) => sum + gem.value) +
-        artObjects.fold(0, (sum, art) => sum + art.value);
+        (electrumPieces ~/ 2).toInt() +
+        (silverPieces ~/ 10).toInt() +
+        (copperPieces ~/ 100).toInt() +
+        items.fold<int>(0, (sum, item) => sum + item.value) +
+        gems.fold<int>(0, (sum, gem) => sum + gem.value) +
+        artObjects.fold<int>(0, (sum, art) => sum + art.value);
   }
 
   void addCurrency({
@@ -255,6 +255,7 @@ class LootGenerator {
       name: name,
       effect: 'A valuable gemstone.',
       type: 'gem',
+      weight: 0,
       value: value,
     );
   }
@@ -295,6 +296,7 @@ class LootGenerator {
       name: name,
       effect: 'A valuable art object.',
       type: 'art',
+      weight: 1,
       value: value,
     );
   }
@@ -437,6 +439,7 @@ class LootGenerator {
       name: 'Random $type',
       effect: 'A random item.',
       type: type,
+      weight: 1,
       value: targetValue,
     );
   }
@@ -462,6 +465,7 @@ class LootGenerator {
         name: '${hoard.goldPieces} Gold, ${hoard.platinumPieces} Platinum',
         effect: 'Currency from treasure hoard',
         type: 'currency',
+        weight: 0,
         value: hoard.totalValueInGold,
       ));
     }

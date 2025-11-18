@@ -105,11 +105,11 @@ class Party {
   }
 
   int get totalHitPoints {
-    return members.map((c) => c.hitPointsCurrent).reduce((a, b) => a + b);
+    return members.map((c) => c.hpCurrent).reduce((a, b) => a + b);
   }
 
   int get maxHitPoints {
-    return members.map((c) => c.hitPointsMax).reduce((a, b) => a + b);
+    return members.map((c) => c.hpMax).reduce((a, b) => a + b);
   }
 
   bool get isHealthy {
@@ -117,7 +117,7 @@ class Party {
   }
 
   bool get needsRest {
-    return members.any((c) => c.hitPointsCurrent < c.hitPointsMax * 0.5);
+    return members.any((c) => c.hpCurrent < c.hpMax * 0.5);
   }
 
   List<EnhancedCharacter> get frontLine {

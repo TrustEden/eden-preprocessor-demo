@@ -440,7 +440,7 @@ class CampaignExportService {
           ? Party(
               id: campaign.party!.id,
               name: campaign.party!.name,
-              partyLeaderId: campaign.party!.partyLeaderId,
+              leader: campaign.party!.leader,
             )
           : null,
       // Keep world structure but no discovered locations
