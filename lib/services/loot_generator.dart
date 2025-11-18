@@ -17,14 +17,14 @@ class LootTable {
   String name;
   int minChallengeRating;
   int maxChallengeRating;
-  Map<ItemRarity, double> raritychances; // % chance for each rarity
+  Map<ItemRarity, double> rarityChances; // % chance for each rarity
 
   LootTable({
     required this.id,
     required this.name,
     required this.minChallengeRating,
     required this.maxChallengeRating,
-    required this.raritychances,
+    required this.rarityChances,
   });
 }
 
@@ -94,7 +94,7 @@ class LootGenerator {
   static TreasureHoard generate({
     required double challengeRating,
     TreasureHoardSize hoardSize = TreasureHoardSize.individual,
-    bool includemagicItems = true,
+    bool includeMagicItems = true,
   }) {
     var hoard = TreasureHoard();
 
@@ -107,7 +107,7 @@ class LootGenerator {
     }
 
     // Generate magic items based on CR
-    if (includemagicItems) {
+    if (includeMagicItems) {
       _generateMagicItems(hoard, challengeRating, hoardSize);
     }
 
@@ -137,7 +137,7 @@ class LootGenerator {
     var hoard = generate(
       challengeRating: challengeRating,
       hoardSize: TreasureHoardSize.huge,
-      includemagicItems: true,
+      includeMagicItems: true,
     );
 
     // Boss always has at least one magic item
@@ -407,7 +407,7 @@ class LootGenerator {
     var hoard = generate(
       challengeRating: effectiveCR,
       hoardSize: size,
-      includemagicItems: isMajorQuest,
+      includeMagicItems: isMajorQuest,
     );
 
     // Quest rewards tend to be gold-heavy
