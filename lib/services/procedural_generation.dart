@@ -380,14 +380,14 @@ class DungeonGenerator {
 class NPCGenerator {
   static final Random _rng = Random();
 
-  static NPC generate() {
+  static GeneratedNPC generate() {
     String name = _generateName();
     String race = _selectRace();
     String occupation = _selectOccupation();
     String personality = _generatePersonality();
     String quirk = _generateQuirk();
 
-    return NPC(
+    return GeneratedNPC(
       id: 'npc_${DateTime.now().millisecondsSinceEpoch}_${_rng.nextInt(1000)}',
       name: name,
       race: race,
@@ -492,7 +492,7 @@ class NPCGenerator {
   }
 }
 
-class NPC {
+class GeneratedNPC {
   String id;
   String name;
   String race;
@@ -500,7 +500,7 @@ class NPC {
   String personality;
   String quirk;
 
-  NPC({
+  GeneratedNPC({
     required this.id,
     required this.name,
     required this.race,
@@ -522,7 +522,7 @@ class NPC {
         'quirk': quirk,
       };
 
-  factory NPC.fromJson(Map<String, dynamic> json) => NPC(
+  factory GeneratedNPC.fromJson(Map<String, dynamic> json) => GeneratedNPC(
         id: json['id'] as String,
         name: json['name'] as String,
         race: json['race'] as String,

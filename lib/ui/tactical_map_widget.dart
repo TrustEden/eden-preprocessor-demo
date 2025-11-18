@@ -68,6 +68,12 @@ class _TacticalMapWidgetState extends State<TacticalMapWidget> {
       return;
     }
 
+    // Check if characters list is not empty
+    if (widget.characters.isEmpty) {
+      setState(() => _movementRange = null);
+      return;
+    }
+
     // Find the selected character's position
     Position? currentPos = widget.map.getCombatantPosition(widget.selectedCombatantId!);
     if (currentPos == null) return;
