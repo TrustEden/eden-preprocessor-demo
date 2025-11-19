@@ -11,7 +11,7 @@ class AIDungeonMasterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Dungeon Master',
+      title: 'AI-Assisted DM Control Center',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.brown,

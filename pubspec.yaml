@@ -17,6 +17,8 @@ dependencies:
   provider: ^6.1.0
   uuid: ^4.0.0
   shared_preferences: ^2.2.0
+  # Secure storage for API keys
+  flutter_secure_storage: ^9.0.0
   # Multiplayer and networking
   web_socket_channel: ^2.4.0
   # Voice narration
