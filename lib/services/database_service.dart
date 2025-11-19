@@ -6,6 +6,8 @@ import '../models/character.dart';
 import '../models/game_state.dart';
 import '../models/item.dart';
 import '../models/combat_state.dart';
+import '../models/game_session.dart';
+import '../models/enhanced_character.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -547,6 +549,423 @@ class DatabaseService {
     final db = await database;
     return await db.query(
       'game_states',
+      orderBy: 'last_saved DESC',
+    );
+  }
+
+  // ==================== NEW: GameSession Support ====================
+
+  /// Save a GameSession (new multi-user session format)
+  Future<void> saveGameSession(GameSession session) async {
+    final db = await database;
+
+    // Create sessions table if it doesn't exist (migration support)
+    await _ensureSessionTableExists(db);
+
+    // Save main session data
+    await db.insert(
+      'game_sessions',
+      {
+        'session_id': session.sessionId,
+        'campaign_id': session.campaignId,
+        'campaign_name': session.campaignName,
+        'dm_player_id': session.dmPlayerId,
+        'current_scene': jsonEncode(session.currentScene.toJson()),
+        'game_time_days': session.gameTimeDays,
+        'session_number': session.sessionNumber,
+        'created_at': session.createdAt.toIso8601String(),
+        'last_saved': session.lastSaved.toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    // Save players
+    await _saveSessionPlayers(session);
+
+    // Save characters
+    await _saveSessionCharacters(session);
+
+    // Save events
+    await _saveSessionEvents(session);
+
+    // Save DM secrets
+    await _saveSessionDMSecrets(session);
+
+    // Save active combat if any
+    if (session.activeCombat != null) {
+      await saveCombatState(session.sessionId, session.activeCombat!);
+    } else {
+      await clearCombatState(session.sessionId);
+    }
+  }
+
+  Future<void> _ensureSessionTableExists(Database db) async {
+    // Check if table exists
+    var result = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='game_sessions'",
+    );
+
+    if (result.isEmpty) {
+      // Create new tables for session support
+      await db.execute('''
+        CREATE TABLE game_sessions (
+          session_id TEXT PRIMARY KEY,
+          campaign_id TEXT NOT NULL,
+          campaign_name TEXT NOT NULL,
+          dm_player_id TEXT NOT NULL,
+          current_scene TEXT NOT NULL,
+          game_time_days INTEGER NOT NULL DEFAULT 0,
+          session_number INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL,
+          last_saved TEXT NOT NULL
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE session_players (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          session_id TEXT NOT NULL,
+          player_id TEXT NOT NULL,
+          player_name TEXT NOT NULL,
+          character_id TEXT,
+          role TEXT NOT NULL,
+          is_connected INTEGER NOT NULL DEFAULT 1,
+          joined_at TEXT NOT NULL,
+          last_activity TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id),
+          UNIQUE(session_id, player_id)
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE session_events (
+          id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          timestamp TEXT NOT NULL,
+          event_type TEXT NOT NULL,
+          description TEXT NOT NULL,
+          player_action TEXT,
+          dm_response TEXT,
+          metadata TEXT,
+          is_dm_secret INTEGER NOT NULL DEFAULT 0,
+          importance INTEGER NOT NULL DEFAULT 5,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE session_dm_secrets (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          session_id TEXT NOT NULL,
+          secret_type TEXT NOT NULL,
+          secret_key TEXT NOT NULL,
+          secret_value TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE enhanced_characters (
+          id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          character_data TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+    }
+  }
+
+  Future<void> _saveSessionPlayers(GameSession session) async {
+    final db = await database;
+
+    // Delete existing players for this session
+    await db.delete(
+      'session_players',
+      where: 'session_id = ?',
+      whereArgs: [session.sessionId],
+    );
+
+    // Insert all players
+    for (var entry in session.players.entries) {
+      var player = entry.value;
+      await db.insert('session_players', {
+        'session_id': session.sessionId,
+        'player_id': player.playerId,
+        'player_name': player.playerName,
+        'character_id': player.characterId,
+        'role': player.role.toString(),
+        'is_connected': player.isConnected ? 1 : 0,
+        'joined_at': player.joinedAt.toIso8601String(),
+        'last_activity': player.lastActivity.toIso8601String(),
+      });
+    }
+  }
+
+  Future<void> _saveSessionCharacters(GameSession session) async {
+    final db = await database;
+
+    // Delete existing characters for this session
+    await db.delete(
+      'enhanced_characters',
+      where: 'session_id = ?',
+      whereArgs: [session.sessionId],
+    );
+
+    // Insert all characters
+    for (var character in session.activeCharacters) {
+      await db.insert('enhanced_characters', {
+        'id': character.id,
+        'session_id': session.sessionId,
+        'character_data': jsonEncode(character.toJson()),
+      });
+    }
+  }
+
+  Future<void> _saveSessionEvents(GameSession session) async {
+    final db = await database;
+
+    // For efficiency, only save new events (simplified for now)
+    // TODO: Track which events are already saved
+    await db.delete(
+      'session_events',
+      where: 'session_id = ?',
+      whereArgs: [session.sessionId],
+    );
+
+    for (var event in session.sharedHistory) {
+      await db.insert('session_events', {
+        'id': event.id,
+        'session_id': session.sessionId,
+        'timestamp': event.timestamp.toIso8601String(),
+        'event_type': event.eventType.toString(),
+        'description': event.description,
+        'player_action': event.playerAction,
+        'dm_response': event.dmResponse,
+        'metadata': event.metadata != null ? jsonEncode(event.metadata) : null,
+        'is_dm_secret': event.isDMSecret ? 1 : 0,
+        'importance': event.importance,
+      });
+    }
+  }
+
+  Future<void> _saveSessionDMSecrets(GameSession session) async {
+    final db = await database;
+
+    // Delete existing secrets
+    await db.delete(
+      'session_dm_secrets',
+      where: 'session_id = ?',
+      whereArgs: [session.sessionId],
+    );
+
+    // Save DM notes
+    for (var note in session.dmSecrets.dmNotes) {
+      await db.insert('session_dm_secrets', {
+        'session_id': session.sessionId,
+        'secret_type': 'note',
+        'secret_key': DateTime.now().millisecondsSinceEpoch.toString(),
+        'secret_value': note,
+      });
+    }
+
+    // Save NPC secrets
+    for (var entry in session.dmSecrets.npcSecrets.entries) {
+      await db.insert('session_dm_secrets', {
+        'session_id': session.sessionId,
+        'secret_type': 'npc_secret',
+        'secret_key': entry.key,
+        'secret_value': entry.value,
+      });
+    }
+
+    // Save hidden info
+    await db.insert('session_dm_secrets', {
+      'session_id': session.sessionId,
+      'secret_type': 'hidden_info',
+      'secret_key': 'data',
+      'secret_value': jsonEncode(session.dmSecrets.hiddenInfo),
+    });
+  }
+
+  /// Load a GameSession
+  Future<GameSession?> loadGameSession(String sessionId) async {
+    final db = await database;
+
+    // Ensure tables exist
+    await _ensureSessionTableExists(db);
+
+    // Load main session data
+    final sessionData = await db.query(
+      'game_sessions',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+
+    if (sessionData.isEmpty) return null;
+
+    var data = sessionData.first;
+
+    // Load players
+    var players = await _loadSessionPlayers(sessionId);
+
+    // Load characters
+    var characters = await _loadSessionCharacters(sessionId);
+
+    // Load events
+    var events = await _loadSessionEvents(sessionId);
+
+    // Load DM secrets
+    var dmSecrets = await _loadSessionDMSecrets(sessionId);
+
+    // Load combat if exists
+    var combat = await loadCombatState(sessionId);
+
+    return GameSession(
+      sessionId: data['session_id'] as String,
+      campaignId: data['campaign_id'] as String,
+      campaignName: data['campaign_name'] as String,
+      dmPlayerId: data['dm_player_id'] as String,
+      players: players,
+      activeCharacters: characters,
+      currentScene: Scene.fromJson(jsonDecode(data['current_scene'] as String) as Map<String, dynamic>),
+      sharedHistory: events,
+      dmSecrets: dmSecrets,
+      activeCombat: combat,
+      gameTimeDays: data['game_time_days'] as int? ?? 0,
+      sessionNumber: data['session_number'] as int? ?? 1,
+      createdAt: DateTime.parse(data['created_at'] as String),
+      lastSaved: DateTime.parse(data['last_saved'] as String),
+    );
+  }
+
+  Future<Map<String, PlayerConnection>> _loadSessionPlayers(String sessionId) async {
+    final db = await database;
+
+    var results = await db.query(
+      'session_players',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+
+    Map<String, PlayerConnection> players = {};
+
+    for (var row in results) {
+      var player = PlayerConnection(
+        playerId: row['player_id'] as String,
+        playerName: row['player_name'] as String,
+        characterId: row['character_id'] as String?,
+        role: SessionRole.values.firstWhere(
+          (e) => e.toString() == row['role'],
+          orElse: () => SessionRole.player,
+        ),
+        isConnected: (row['is_connected'] as int) == 1,
+        joinedAt: DateTime.parse(row['joined_at'] as String),
+        lastActivity: DateTime.parse(row['last_activity'] as String),
+      );
+
+      players[player.playerId] = player;
+    }
+
+    return players;
+  }
+
+  Future<List<EnhancedCharacter>> _loadSessionCharacters(String sessionId) async {
+    final db = await database;
+
+    var results = await db.query(
+      'enhanced_characters',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+
+    List<EnhancedCharacter> characters = [];
+
+    for (var row in results) {
+      var characterData = jsonDecode(row['character_data'] as String) as Map<String, dynamic>;
+      characters.add(EnhancedCharacter.fromJson(characterData));
+    }
+
+    return characters;
+  }
+
+  Future<List<GameEvent>> _loadSessionEvents(String sessionId) async {
+    final db = await database;
+
+    var results = await db.query(
+      'session_events',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+      orderBy: 'timestamp ASC',
+    );
+
+    List<GameEvent> events = [];
+
+    for (var row in results) {
+      events.add(GameEvent(
+        id: row['id'] as String,
+        timestamp: DateTime.parse(row['timestamp'] as String),
+        eventType: EventType.values.firstWhere(
+          (e) => e.toString() == row['event_type'],
+          orElse: () => EventType.narrative,
+        ),
+        description: row['description'] as String,
+        playerAction: row['player_action'] as String?,
+        dmResponse: row['dm_response'] as String?,
+        metadata: row['metadata'] != null ? jsonDecode(row['metadata'] as String) as Map<String, dynamic> : null,
+        isDMSecret: (row['is_dm_secret'] as int) == 1,
+        importance: row['importance'] as int? ?? 5,
+      ));
+    }
+
+    return events;
+  }
+
+  Future<DMSecrets> _loadSessionDMSecrets(String sessionId) async {
+    final db = await database;
+
+    var results = await db.query(
+      'session_dm_secrets',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+
+    List<String> dmNotes = [];
+    Map<String, String> npcSecrets = {};
+    Map<String, dynamic> hiddenInfo = {};
+
+    for (var row in results) {
+      String type = row['secret_type'] as String;
+      String key = row['secret_key'] as String;
+      String value = row['secret_value'] as String;
+
+      switch (type) {
+        case 'note':
+          dmNotes.add(value);
+          break;
+        case 'npc_secret':
+          npcSecrets[key] = value;
+          break;
+        case 'hidden_info':
+          hiddenInfo = jsonDecode(value) as Map<String, dynamic>;
+          break;
+      }
+    }
+
+    return DMSecrets(
+      dmNotes: dmNotes,
+      npcSecrets: npcSecrets,
+      hiddenInfo: hiddenInfo,
+    );
+  }
+
+  /// List all saved sessions
+  Future<List<Map<String, dynamic>>> listGameSessions() async {
+    final db = await database;
+
+    await _ensureSessionTableExists(db);
+
+    return await db.query(
+      'game_sessions',
       orderBy: 'last_saved DESC',
     );
   }
