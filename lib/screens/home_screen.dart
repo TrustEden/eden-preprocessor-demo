@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Dungeon Master'),
+        title: const Text('AI-Assisted DM Control Center'),
         backgroundColor: Colors.brown[700],
       ),
       body: Center(
@@ -88,13 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Welcome, Adventurer!',
+                'Welcome, Dungeon Master!',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'Your AI-powered D&D 5e adventure awaits',
+                'AI suggests, you decide. Run epic D&D 5e campaigns with multiplayer support.',
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
