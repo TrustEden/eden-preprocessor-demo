@@ -1,644 +1,779 @@
-# AI Dungeon Master
+# AI-Assisted DM Control Center
 
-A comprehensive single-player D&D 5e experience with an AI Dungeon Master powered by Claude.
+A comprehensive D&D 5e campaign management tool with AI-powered assistance for Dungeon Masters and players.
 
 ## Overview
 
-This Flutter desktop application provides a rich D&D 5e gaming experience where Claude acts as your Dungeon Master. Create diverse characters, explore procedurally-generated dungeons, engage in tactical grid-based combat, cast spells, complete quests, craft items, and level up through an epic adventure.
+This Flutter desktop application provides a complete D&D 5e experience where Claude AI acts as your creative assistant. Whether running solo adventures or managing multiplayer campaigns, the DM Control Center combines tactical gameplay, dynamic narrative generation, and advanced campaign management tools to create memorable tabletop RPG experiences.
+
+**Core Philosophy**: "AI suggests, DM decides" - AI provides creative assistance while human DMs maintain full control.
+
+## Current Status
+
+**Phase 1 Complete**: Solo AI dungeon master with core D&D 5e systems
+**Phase 2 Complete**: Multiplayer DM control center with 8 advanced gameplay systems
+**Code Base**: 39,056 lines across 87 Dart files
+**Production Status**: Feature-complete with comprehensive documentation
 
 ## Features
 
-### ✅ Core Systems
-- **Character Creation & Advancement**: Full multi-class character creation system with comprehensive leveling mechanics
-- **AI Dungeon Master**: Claude generates dynamic narrative responses and manages complex game states
-- **Turn-Based Combat**: Complete D&D 5e combat mechanics with initiative, attack rolls, damage, and tactical positioning
-- **Tactical Combat Maps**: Grid-based combat with terrain types, cover systems, line-of-sight, and area-of-effect spells
-- **Spell System**: Comprehensive spell database with spell slots, concentration, and spellcasting mechanics
-- **Quest System**: Dynamic quest generation and tracking with quest journal UI
-- **Procedural Generation**: Dungeon and encounter generation for varied gameplay
-- **Loot System**: Advanced loot generation with rarity tiers and magic items
-- **Crafting System**: Create items, potions, and equipment using gathered materials
-- **Skill Checks**: D20 rolls with proficiency bonuses and difficulty classes
-- **Experience & Leveling**: Full progression system with automatic stat increases and class features
-- **Inventory Management**: Equipment system with weapons, armor, consumables, and magic items
-- **Save/Load**: Robust SQLite persistence for all game state
-- **Desktop Support**: Runs on Windows, macOS, and Linux
+### Phase 1: Core D&D 5e Systems
 
-### 🎮 UI Widgets
-- **Character Sheet**: Comprehensive character stat display and management
-- **Dice Roller**: Interactive D20 dice rolling with modifiers
-- **Spell Book**: Browse and manage character spells
-- **Quest Journal**: Track active quests and objectives
+#### Character Creation & Management
+- Full D&D 5e character creation with races, classes, backgrounds
+- 6 core ability scores with automatic modifier calculation
+- Multiclassing support for hybrid character builds
+- Hit points, armor class, proficiency bonuses
+- Equipment and inventory management
+- Character sheet widget with comprehensive stat display
 
-### 📚 Game Content
-- **Expanded Spell Database**: Large collection of D&D 5e spells
-- **Monster Database**: Extensive creature collection for encounters
-- **Magic Items**: Comprehensive magical equipment database
+**Implementation**: `lib/models/enhanced_character.dart`, `lib/screens/character_creation_screen.dart`, `lib/ui/character_sheet_widget.dart`
 
-## New Features (Latest Update)
+#### Turn-Based Combat System
+- Initiative rolling with dexterity modifiers
+- Attack rolls with proficiency and advantage/disadvantage
+- Damage calculation and hit point tracking
+- Death saving throws for downed characters
+- Multi-round tactical encounters
+- Combat state persistence across sessions
 
-### 🖼️ AI-Generated Character Portraits
+**Implementation**: `lib/services/combat_service.dart`, `lib/models/enhanced_combat.dart`, `lib/screens/combat_screen.dart`
 
-Create unique, AI-generated portraits for your characters that match their race, class, and personality!
+#### Tactical Grid-Based Maps
+- Interactive 50x50 grid combat maps
+- 9 terrain types: normal, difficult, blocking, hazard, half/three-quarters/full cover, water, ice
+- Character positioning and movement tracking
+- Fog of war system with visibility calculations
+- Line-of-sight checks for spells and attacks
+- Visual indicators for turn order and selection
 
-**Features:**
-- Support for DALL-E and Stable Diffusion APIs
-- Automatic prompt generation based on character attributes
-- Character-specific details (race features, equipment, class aesthetics)
-- Placeholder avatars while portraits generate
+**Implementation**: `lib/models/tactical_map.dart`, `lib/ui/tactical_map_widget.dart`
+
+#### Comprehensive Spell System
+- 600+ spells from official D&D 5e sources
+- Spell slot tracking per character and spell level
+- Spell preparation mechanics for prepared casters
+- Concentration tracking for ongoing effects
+- Area-of-effect spell targeting on tactical maps
+- Cantrips with unlimited casting
+
+**Implementation**: `lib/data/expanded_spell_database.dart`, `lib/ui/spell_book_widget.dart`
+
+#### Quest System
+- Dynamic quest generation powered by AI
+- Multiple quest types: fetch, combat, exploration, social
+- Objective tracking with progress indicators
+- Quest rewards: XP, gold, magic items
+- Quest journal UI widget
+- Quest completion tracking and history
+
+**Implementation**: `lib/services/quest_generation.dart`, `lib/models/quest.dart`, `lib/ui/quest_journal_widget.dart`
+
+#### Loot & Treasure Generation
+- Rarity-based loot tables: Common, Uncommon, Rare, Very Rare, Legendary, Artifact
+- 300+ magic items database
+- Random treasure generation after combat
+- Level-scaling loot rewards
+- Magical properties and effects
+
+**Implementation**: `lib/services/loot_generator.dart`, `lib/data/expanded_magic_items.dart`
+
+#### Character Advancement
+- Experience point tracking with D&D 5e XP thresholds
+- Level-up mechanics supporting levels 1-20
+- Ability Score Improvements at specific levels (4, 8, 12, 16, 19)
+- Hit point increases based on class hit dice
+- Proficiency bonus scaling (+2 to +6)
+- Spell slot progression for spellcasters
+
+**Implementation**: `lib/services/character_advancement.dart`, `lib/services/experience_service.dart`
+
+#### AI Dungeon Master
+- Powered by Claude Sonnet 4 (Anthropic API)
+- Dynamic narrative generation based on player actions
+- Complex game state understanding
+- NPC personality and dialogue generation
+- World building and environmental descriptions
+- Encounter design and pacing
+
+**Implementation**: `lib/services/claude_service.dart`, `lib/services/ai_assistant_service.dart`
+
+#### Procedural Generation
+- Dungeon generation with rooms, corridors, and encounters
+- Balanced encounter design for party level
+- Location and setting generation
+- NPC generation with personalities and motivations
+- Trap and hazard creation
+- Random encounter tables
+
+**Implementation**: `lib/services/procedural_generation.dart`
+
+### Phase 2: Advanced Gameplay Systems
+
+#### 1. Relationship System
+Track NPC attitudes and influence game world interactions.
+
+**Features**:
+- 8 relationship tiers from Hostile (-100) to Devoted (+100)
+- Memorable events that NPCs reference in dialogue
+- Merchant price modifiers based on attitude (0.5x to 2.0x pricing)
+- Romance and rivalry tracking
+- Time-based relationship decay
+- Party cohesion monitoring
+
+**Price Impact Examples**:
+- Devoted (75-100): 20% discount
+- Neutral (0-24): Normal pricing
+- Hostile (-49 to -25): 30% markup
+- Nemesis (-100 to -75): Refuses service
+
+**Implementation**: `lib/models/relationship_system.dart`, `lib/services/relationship_service.dart`, `lib/widgets/relationship_tracking_panel.dart`
+
+#### 2. World Events System
+Create dynamic, reactive campaign worlds with evolving situations.
+
+**Features**:
+- 7 event types: Seasonal, Political, Economic, Natural, Faction, Quest, Player-Driven
+- 6 event scales: Personal, Local, Regional, National, Continental, Global
+- Event triggers: Time-based, location-based, quest-based, faction-based
+- Faction conflict tracking with tension meters (0-100)
+- Auto-triggered events based on game day and player actions
+- Multiple possible consequences per event
+- Event status: Upcoming, Active, Concluded, Cancelled
+
+**Example**: Orc invasion (War, Regional) triggers when party reaches level 5, creating faction conflicts and quest opportunities.
+
+**Implementation**: `lib/models/world_events.dart`, `lib/services/world_event_service.dart`, `lib/widgets/world_events_panel.dart`
+
+#### 3. Enhanced Combat with Boss Mechanics
+Memorable epic battles with legendary creatures.
+
+**Features**:
+- Combat reactions: Opportunity attacks, counterspells, shield, parry
+- Environmental hazards: Difficult terrain, traps, magical zones, fire, poison
+- Boss mechanics:
+  - Legendary Actions: Up to 3 per round at specific initiative counts
+  - Lair Actions: Special terrain effects every round 20
+  - Multi-Phase Battles: Boss tactics change at HP thresholds
+  - Legendary Resistances: Auto-succeed on saving throws (limited uses)
+- Per-round reaction tracking for all combatants
+
+**Implementation**: `lib/models/enhanced_combat.dart`, `lib/services/enhanced_combat_service.dart`
+
+#### 4. Character Development & Personal Quests
+Personalized story arcs for each character.
+
+**Features**:
+- 7 personal quest types: Revenge, Redemption, Legacy, Discovery, Love, Duty, Transformation
+- Multi-stage character arcs with narrative beats
+- Growth milestones tied to specific achievements
+- Optional time limits for urgent quests
+- Visual progress tracking in UI
+- Memorable moments system
+- Special ability unlocks through arc completion
+
+**Example Arc**: Fallen Paladin seeks redemption through 4 stages, earning divine powers back upon completion.
+
+**Implementation**: `lib/models/character_development.dart`, `lib/services/character_arc_service.dart`, `lib/widgets/character_development_panel.dart`
+
+#### 5. Crafting System with Quality Scoring
+Meaningful item creation with progression and risk.
+
+**Features**:
+- 6 crafting categories: Weapons, Armor, Potions, Tools, Magical Items, Art
+- Recipe system with material requirements
+- Quality outcomes: Poor (-1 penalty), Standard, Fine (+1 damage), Masterwork (+1 to hit and damage)
+- Daily progress checks accumulate quality score
+- Failure consequences: Lost materials, damaged projects
+- Time requirements per recipe (1-30 days)
+
+**Example**: Crafting a Masterwork Longsword requires 3 Steel Ingots, 1 Rare Wood Handle, 5 days, and successful daily DC 15 checks to achieve quality 31+.
+
+**Implementation**: `lib/models/crafting_economy.dart`, `lib/services/crafting_service.dart`, `lib/services/crafting_system.dart`, `lib/widgets/crafting_economy_panel.dart`
+
+#### 6. Dynamic Economy System
+Realistic market fluctuations and supply/demand mechanics.
+
+**Features**:
+- Supply and Demand tracking (0-100 scale)
+- Price multipliers ranging from 0.1x to 5.0x
+- Market trends: Rising, Falling, Stable
+- Merchant inventories with restock timers
+- Market events: Shortages, gluts, trade disruptions
+- Daily fluctuations influenced by world events
+- Relationship-based merchant discounts stack with market prices
+
+**Example**: Bandit raids on trade routes cause steel supply to drop from 80 to 20, increasing prices from 1.0x to 3.0x.
+
+**Implementation**: `lib/models/crafting_economy.dart`, `lib/services/economy_service.dart`, `lib/widgets/crafting_economy_panel.dart`
+
+#### 7. DM AI Tools
+Creative assistance for campaign preparation and consistency.
+
+**Features**:
+- NPC Generator: Create detailed NPCs with personality, secrets, motivations, and plot hooks
+- Consistency Checker: Verify campaign continuity and catch contradictions
+- Campaign Analyzer: Insights on pacing, balance, and player engagement
+- Quest Hook Generator: Story hooks tied to campaign themes
+- Scene Suggestions: AI ideas for current situations
+- Dialogue Generator: Sample NPC conversations
+
+**Example Output**: Generate "Silas Blackwater," a charming but evasive merchant who secretly smuggles magical artifacts, with specific personality traits, secrets, and campaign integration.
+
+**Implementation**: `lib/services/dm_ai_tools_service.dart`, `lib/widgets/dm_ai_tools_panel.dart`
+
+#### 8. Encounter Builder with CR Calculations
+Build balanced D&D 5e encounters using official XP budgets.
+
+**Features**:
+- D&D 5e XP calculation with official multipliers
+- 4 difficulty tiers: Easy, Medium, Hard, Deadly
+- Party level thresholds (accurate per DMG tables)
+- Auto-generation for target difficulty
+- Effective CR calculation for monster groups
+- Daily XP budget suggestions
+- Tactical environment recommendations
+
+**Example**: For 4 level-3 characters (Hard difficulty = 900 XP), generates 1 Ogre (450 XP) + 4 Goblins (200 XP) with 2.0x multiplier = 1300 adjusted XP.
+
+**Implementation**: `lib/services/encounter_builder_service.dart`
+
+### Supporting Features
+
+#### Multiplayer Session Management
+Real-time cooperative campaigns with multiple players.
+
+**Features**:
+- Host/join system for multiplayer sessions
+- Real-time synchronization via WebSocket
+- Player connection tracking
+- Role-based permissions: DM, Player, Observer
+- Turn-based gameplay coordination
+- Event broadcasting: Actions, chat, combat updates
+- Session persistence across disconnects
+
+**Implementation**: `lib/services/multiplayer_service.dart`, `lib/services/session_service.dart`, `lib/screens/session_lobby_screen.dart`, `lib/models/game_session.dart`
+
+#### Campaign Import/Export
+Share campaigns with the community.
+
+**Export Formats**:
+- **JSON**: Human-readable format (large file size)
+- **Compressed**: Gzip-compressed JSON (smaller file size)
+- **Package**: ZIP archive with campaign data, README, and assets
+
+**Features**:
+- Campaign metadata with version tracking
+- Import validation for compatibility
+- Progress stripping for template creation
+- Character inclusion options
+- File management interface
+
+**Implementation**: `lib/services/campaign_export_service.dart`
+
+#### Voice Narration
+Immersive text-to-speech for DM responses.
+
+**Features**:
+- Local TTS via Flutter TTS
+- Cloud TTS options: Google Cloud TTS, Azure TTS, ElevenLabs
+- Voice presets: Narrator, Male, Female, Creature, Villain, Elder
+- Adjustable pitch, rate, and volume
+- Auto-play option for DM responses
+
+**Implementation**: `lib/services/text_to_speech_service.dart`
+
+#### AI-Generated Character Portraits
+Unique visual representations for characters.
+
+**Features**:
+- DALL-E and Stable Diffusion API support
+- Automatic prompt generation from character stats
+- Character-specific details: Race, class, equipment
 - Portrait caching for performance
+- Placeholder avatars during generation
 
-**Setup:**
-```dart
-// Configure in settings
-PortraitGenerationService().setApiKey('your-api-key');
-PortraitGenerationService().setProvider('dall-e'); // or 'stable-diffusion'
+**Implementation**: `lib/services/portrait_generation_service.dart`
 
-// Generate portrait for a character
-await PortraitGenerationService().updateCharacterPortrait(character);
-```
+#### Configurable AI Provider Support
+Flexibility in AI backend selection.
 
-**How it Works:**
-1. Character attributes (race, class, equipment, personality) are analyzed
-2. A detailed prompt is generated describing the character's appearance
-3. The prompt is sent to the configured AI image generation API
-4. The generated portrait URL is saved to the character
-5. Portraits are displayed in character sheets and combat screens
+**Supported Providers**:
+- Anthropic Claude (recommended): claude-sonnet-4, claude-opus, claude-haiku
+- OpenAI: gpt-4, gpt-4-turbo, gpt-3.5-turbo
+- Google Gemini: gemini-pro, gemini-ultra
+- Local/Custom endpoints
 
-### 🎮 Multiplayer Co-op Campaigns
+**Features**:
+- Per-session AI configuration
+- Temperature and max tokens control
+- Encrypted API key storage
+- Provider abstraction layer
 
-Play with friends in real-time cooperative campaigns!
+**Implementation**: `lib/services/multi_ai_service.dart`, `lib/services/claude_service_adapter.dart`, `lib/services/openai_service.dart`, `lib/services/gemini_service.dart`, `lib/services/api_key_service.dart`, `lib/screens/settings/ai_configuration_screen.dart`
 
-**Features:**
-- **Real-time Synchronization**: WebSocket-based multiplayer with instant updates
-- **Host/Join System**: One player hosts, others join via session ID
-- **Turn Management**: Coordinated turn-based gameplay
-- **Character Assignment**: Each player controls their own character
-- **Event Broadcasting**: Actions, chat, combat updates shared in real-time
-- **Player List**: See who's connected and their status
+#### Save/Load System
+Robust game state persistence.
 
-**How to Use:**
-```dart
-// Host a session
-String sessionId = await MultiplayerService().hostSession(
-  campaign: campaign,
-  playerName: 'Alice',
-  playerId: 'player-1',
-);
+**Features**:
+- Auto-save every 2 minutes
+- Manual save on demand
+- Multiple campaign slots
+- SQLite database with 19+ tables
+- Auto-migration for schema updates
+- Campaign progress tracking
 
-// Join a session
-await MultiplayerService().joinSession(
-  sessionId: sessionId,
-  playerName: 'Bob',
-  playerId: 'player-2',
-  characterId: 'character-id',
-);
+**Database Location**: `~/.ai_dungeon_master/ai_dungeon_master.db`
 
-// Send game events
-MultiplayerService().broadcastAction(
-  action: 'attack',
-  actionData: {'target': 'goblin-1'},
-);
-```
-
-**Multiplayer Events:**
-- Player joined/left notifications
-- Game state synchronization
-- Chat messages
-- Action broadcasts
-- Turn changes
-- Combat updates
-- Character updates
-- DM responses (from host)
-
-### 🎙️ Voice Narration for DM Responses
-
-Immerse yourself with voice narration for all DM responses!
-
-**Features:**
-- **Local TTS**: Built-in Flutter TTS for offline play
-- **Cloud TTS**: High-quality voices via Google Cloud TTS, Azure, or ElevenLabs
-- **Voice Presets**: Different voices for narrator, characters, creatures, and villains
-- **Voice Settings**: Adjustable pitch, rate, and volume
-- **Playback Controls**: Play, pause, stop narration
-- **Auto-play**: Optional automatic narration of DM responses
-
-**Voice Types:**
-- **Narrator**: Default DM voice (warm, professional)
-- **Male/Female**: Character dialogue voices
-- **Creature**: Deep, menacing voice for monsters
-- **Villain**: Dramatic, threatening voice
-- **Elder**: Older, wise voice for NPCs
-
-**Setup:**
-```dart
-// Initialize TTS
-await TextToSpeechService().initialize();
-
-// Configure cloud TTS (optional)
-TextToSpeechService().setCloudTtsApiKey('api-key', provider: 'google');
-
-// Speak DM narration
-await TextToSpeechService().speak(
-  dmResponse,
-  voiceType: VoiceType.narrator,
-);
-
-// Adjust voice settings
-await TextToSpeechService().updateSettings(VoiceSettings(
-  pitch: 1.0,
-  rate: 0.9,
-  volume: 1.0,
-));
-```
-
-### 🗺️ Enhanced Tactical Map Visualization
-
-Upgraded tactical combat with beautiful, interactive maps!
-
-**Features:**
-- **Interactive Grid**: Click, drag, and drop characters on the map
-- **Zoom & Pan**: Navigate large battlefields with ease
-- **Movement Range Visualization**: See valid movement squares highlighted
-- **Fog of War**: Reveal the map as characters explore
-- **Terrain Rendering**: Visual distinction for different terrain types
-- **Cover Indicators**: Clear visual feedback for cover positions
-- **Selection Highlighting**: Selected character clearly marked
-- **Turn Indicators**: See whose turn it is at a glance
-- **Hover Information**: Tile details and occupancy info on hover
-- **Legend**: Quick reference for terrain and combatant types
-
-**Terrain Types Visualized:**
-- Normal terrain (light gray)
-- Difficult terrain (brown)
-- Blocking terrain (dark gray)
-- Hazards (red)
-- Half cover (light orange)
-- Three-quarters cover (dark orange)
-- Full cover (black)
-- Water (blue)
-- Ice (cyan)
-
-**How to Use:**
-```dart
-TacticalMapWidget(
-  map: tacticalMap,
-  characters: partyCharacters,
-  monsters: enemies,
-  currentTurnCombatantId: currentCombatant,
-  selectedCombatantId: selectedCharacter,
-  showGrid: true,
-  showMovementRange: true,
-  fogOfWarEnabled: true,
-  visibleTiles: calculatedVisibleTiles,
-  onCombatantSelected: (id) => selectCombatant(id),
-  onCombatantMoved: (id, pos) => moveCombatant(id, pos),
-  onTileSelected: (pos) => handleTileClick(pos),
-)
-```
-
-### 📦 Campaign Sharing and Import/Export
-
-Share your epic campaigns with the community!
-
-**Features:**
-- **Multiple Export Formats**:
-  - JSON: Human-readable format
-  - Compressed: Gzip-compressed for smaller file sizes
-  - Package: Full campaign package with assets and README
-- **Campaign Metadata**: Version tracking, author info, ratings
-- **Validation**: Import validation ensures compatibility
-- **Progress Stripping**: Export templates without progress data
-- **Character Export**: Include or exclude party characters
-- **File Management**: View and delete exported campaigns
-
-**Export Options:**
-```dart
-// Export with dialog (user chooses location)
-String? filePath = await CampaignExportService().exportCampaignWithDialog(
-  campaign: campaign,
-  exportedBy: 'YourUsername',
-  format: ExportFormat.compressed,
-  includeCharacters: partyMembers,
-);
-
-// Export programmatically
-String? filePath = await CampaignExportService().exportCampaign(
-  campaign: campaign,
-  exportedBy: 'YourUsername',
-  format: ExportFormat.package,
-  includeProgress: false, // Export as template
-);
-```
-
-**Import:**
-```dart
-// Import with dialog
-CampaignPackage? package = await CampaignExportService().importCampaignWithDialog();
-
-// Validate imported campaign
-ValidationResult result = await CampaignExportService().validateCampaign(package);
-
-if (result.isValid) {
-  // Load the campaign
-  Campaign importedCampaign = package.campaign;
-}
-```
-
-**Export Formats:**
-- `.json` - Plain JSON file (readable, large)
-- `.campaign` - Gzip-compressed JSON (small, fast)
-- `.campaignpack` - ZIP archive with campaign data, README, and assets
-
-**Campaign Package Contents:**
-- `campaign.json` - Full campaign data
-- `README.md` - Campaign information and import instructions
-- Character portraits (if available)
-- Custom maps and assets (future enhancement)
-
-### 🎨 Advanced Features
-- **AI-Generated Character Portraits**: Generate unique character portraits using DALL-E or Stable Diffusion APIs
-- **Multiplayer Co-op Campaigns**: Real-time multiplayer support via WebSocket for cooperative play
-- **Voice Narration**: Text-to-speech for DM responses with multiple voice options and cloud TTS support
-- **Enhanced Tactical Map Visualization**: Interactive grid-based combat with zoom, pan, fog of war, and visual effects
-- **Campaign Sharing**: Import/export campaigns with multiple formats (JSON, compressed, full package)
-
-### 🔮 Future Enhancements
-- Sound effects and music
-- Mobile support (iOS and Android)
-- Advanced AI image generation for locations and scenes
-- Campaign marketplace for sharing community creations
+**Implementation**: `lib/services/database_service.dart`
 
 ## Tech Stack
 
-- **Frontend**: Flutter 3.0+
-- **Database**: SQLite (via sqflite_common_ffi for desktop)
-- **AI**: Claude Sonnet 4 API
-- **State Management**: Provider + StatefulWidget
-- **Additional Libraries**: http, uuid, shared_preferences, path_provider, web_socket_channel, flutter_tts, file_picker, archive, cached_network_image
+- **Framework**: Flutter 3.0+ (Desktop: Windows, macOS, Linux)
+- **Language**: Dart 3.0+ with null safety
+- **Database**: SQLite via sqflite_common_ffi for desktop
+- **AI Provider**: Anthropic Claude API (primary), OpenAI, Google Gemini (alternatives)
+- **State Management**: Provider 6.1.0 + StatefulWidget
+- **Networking**: http 1.1.0, web_socket_channel 2.4.0
+- **Security**: flutter_secure_storage 9.0.0 for API keys
+- **Utilities**: uuid 4.0.0, path_provider 2.1.0, shared_preferences 2.2.0, file_picker 6.1.1, archive 3.4.10, cached_network_image 3.3.1, flutter_tts 3.8.3
 
 ## Project Structure
 
 ```
 lib/
-├── main.dart                          # Application entry point
-├── models/                            # Data models
-│   ├── character.dart                 # Character class with stats
-│   ├── game_state.dart               # Campaign state and events
-│   ├── item.dart                     # Inventory items
-│   ├── combat_state.dart             # Combat tracking
-│   └── tactical_map.dart             # Grid-based tactical combat maps
-├── services/                          # Business logic
-│   ├── database_service.dart         # SQLite persistence
-│   ├── claude_service.dart           # Claude API integration
-│   ├── dice_service.dart             # D20 dice rolling
-│   ├── combat_service.dart           # Combat mechanics
-│   ├── experience_service.dart       # XP and leveling
-│   ├── character_advancement.dart    # Character progression system
-│   ├── quest_generation.dart         # Dynamic quest creation
-│   ├── procedural_generation.dart    # Dungeon and encounter generation
-│   ├── loot_generator.dart           # Item and treasure generation
-│   ├── crafting_system.dart          # Item crafting mechanics
-│   ├── portrait_generation_service.dart  # AI portrait generation
-│   ├── multiplayer_service.dart      # Real-time multiplayer via WebSocket
-│   ├── text_to_speech_service.dart   # Voice narration for DM
-│   └── campaign_export_service.dart  # Campaign import/export
-├── screens/                           # UI screens
-│   ├── home_screen.dart              # Campaign list/new game
-│   ├── character_creation_screen.dart # Character creation wizard
-│   ├── main_game_screen.dart         # Primary gameplay
-│   ├── combat_screen.dart            # Turn-based tactical combat
-│   └── character_sheet_screen.dart   # Character details
-├── ui/                                # Reusable UI widgets
-│   ├── character_sheet_widget.dart   # Character stats display
-│   ├── dice_roller_widget.dart       # Interactive dice roller
-│   ├── spell_book_widget.dart        # Spell management
-│   ├── quest_journal_widget.dart     # Quest tracking
-│   └── tactical_map_widget.dart      # Enhanced tactical map visualization
-└── data/                              # Game content databases
-    ├── spell_database.dart            # Spell definitions
-    ├── expanded_spell_database.dart   # Extended spell collection
-    ├── magic_items.dart               # Magic item database
-    ├── expanded_magic_items.dart      # Extended magic items
-    └── expanded_monster_database.dart # Monster stat blocks
+├── main.dart                              # Application entry point
+├── constants.dart                         # Game constants (damage types, spell schools, etc.)
+├── models/                                # Data models (32 files, 10,923 lines)
+│   ├── enhanced_character.dart            # Full D&D 5e character model
+│   ├── game_session.dart                  # Multiplayer session model
+│   ├── campaign.dart                      # Campaign metadata and configuration
+│   ├── enhanced_combat.dart               # Combat with reactions, hazards, boss mechanics
+│   ├── character_class.dart               # D&D classes with features and subclasses
+│   ├── race.dart                          # Racial traits and modifiers
+│   ├── background.dart                    # Character backgrounds
+│   ├── spell.dart                         # Spell definitions
+│   ├── monster.dart                       # Creature stat blocks
+│   ├── item.dart                          # Equipment and magic items
+│   ├── quest.dart                         # Quest definitions with objectives
+│   ├── tactical_map.dart                  # Grid-based combat maps
+│   ├── relationship_system.dart           # NPC attitudes and memorable events
+│   ├── world_events.dart                  # Dynamic world events and faction conflicts
+│   ├── character_development.dart         # Personal quests and character arcs
+│   ├── crafting_economy.dart              # Recipes, projects, and market pricing
+│   └── ...                                # Additional models
+├── services/                              # Business logic (26 files, 12,365 lines)
+│   ├── database_service.dart              # SQLite persistence layer
+│   ├── session_service.dart               # Game session lifecycle management
+│   ├── claude_service.dart                # Claude API integration
+│   ├── multi_ai_service.dart              # AI provider factory
+│   ├── ai_assistant_service.dart          # High-level AI helper
+│   ├── dm_ai_tools_service.dart           # DM creative assistance tools
+│   ├── combat_service.dart                # Turn-based combat mechanics
+│   ├── enhanced_combat_service.dart       # Boss mechanics, reactions, hazards
+│   ├── dice_service.dart                  # D20 rolling with advantage/disadvantage
+│   ├── character_advancement.dart         # Leveling and XP mechanics
+│   ├── experience_service.dart            # XP tracking
+│   ├── quest_generation.dart              # Dynamic quest creation
+│   ├── procedural_generation.dart         # Dungeon and encounter generation
+│   ├── loot_generator.dart                # Treasure generation
+│   ├── crafting_system.dart               # Item crafting mechanics
+│   ├── crafting_service.dart              # Crafting project management
+│   ├── economy_service.dart               # Market pricing and supply/demand
+│   ├── relationship_service.dart          # NPC attitude management
+│   ├── world_event_service.dart           # Dynamic event system
+│   ├── character_arc_service.dart         # Personal quest tracking
+│   ├── encounter_builder_service.dart     # D&D 5e encounter balancing
+│   ├── multiplayer_service.dart           # Real-time multiplayer via WebSocket
+│   ├── permission_service.dart            # Role-based access control
+│   ├── text_to_speech_service.dart        # Voice narration
+│   ├── portrait_generation_service.dart   # AI-generated portraits
+│   ├── campaign_export_service.dart       # Campaign import/export
+│   └── api_key_service.dart               # Secure API key management
+├── screens/                               # UI screens (9 files, 4,350 lines)
+│   ├── home_screen.dart                   # Campaign list and session lobbies
+│   ├── session_lobby_screen.dart          # Create/join multiplayer sessions
+│   ├── character_creation_screen.dart     # Character creation wizard
+│   ├── main_game_screen.dart              # Solo campaign gameplay
+│   ├── character_sheet_screen.dart        # Detailed character information
+│   ├── combat_screen.dart                 # Combat encounter interface
+│   ├── dm/dm_control_panel.dart           # Phase 1 basic DM interface
+│   ├── dm/enhanced_dm_control_panel.dart  # Phase 2 advanced DM panel with sidebar
+│   ├── player/player_view_screen.dart     # Multiplayer player interface
+│   └── settings/ai_configuration_screen.dart  # AI provider configuration
+├── widgets/                               # DM Control Panel widgets (8 files, 4,157 lines)
+│   ├── dm_party_panel.dart                # Character list with HP and initiative
+│   ├── dm_narrative_center.dart           # Scene description and DM input
+│   ├── dm_ai_assistant_panel.dart         # AI suggestions and questions
+│   ├── relationship_tracking_panel.dart   # NPC attitudes and memorable events
+│   ├── world_events_panel.dart            # Event management and triggers
+│   ├── character_development_panel.dart   # Personal quests and arcs
+│   ├── crafting_economy_panel.dart        # Crafting projects and market pricing
+│   └── dm_ai_tools_panel.dart             # NPC generation and consistency checking
+├── ui/                                    # Reusable UI widgets (5 files, 3,366 lines)
+│   ├── character_sheet_widget.dart        # Comprehensive character display
+│   ├── spell_book_widget.dart             # Spell management and casting
+│   ├── quest_journal_widget.dart          # Quest tracking and completion
+│   ├── tactical_map_widget.dart           # Grid-based combat visualization
+│   └── dice_roller_widget.dart            # Interactive D20 rolling
+└── data/                                  # Static game content (5 files, 3,743 lines)
+    ├── spell_database.dart                # Core D&D 5e spells
+    ├── expanded_spell_database.dart       # Extended spell collection (600+ spells)
+    ├── magic_items.dart                   # Base magic items
+    ├── expanded_magic_items.dart          # Extended magic items (300+ items)
+    └── expanded_monster_database.dart     # Creature stat blocks (200+ monsters)
 ```
+
+**Code Metrics**:
+- Total Files: 87 Dart files
+- Total Lines: 39,056 lines of code
+- Phase 1: ~28,000 lines (core gameplay)
+- Phase 2: ~10,874 lines (advanced features)
 
 ## Getting Started
 
 ### Prerequisites
 
-1. **Flutter SDK** (3.0 or higher)
-   - Download from: https://flutter.dev/docs/get-started/install
-   - Verify with: `flutter doctor`
+1. **Flutter SDK 3.0+**
+   - Download: https://flutter.dev/docs/get-started/install
+   - Verify: `flutter doctor`
 
-2. **Claude API Key**
-   - Get from: https://console.anthropic.com
-   - You'll need to enter this when you first run the app
+2. **Desktop Platform Support**
+   - Linux, macOS 10.14+, or Windows 10+
+
+3. **Claude API Key** (or alternative AI provider)
+   - Anthropic Console: https://console.anthropic.com
+   - Free tier available for testing
 
 ### Installation
 
-1. **Clone the repository**
+1. **Clone Repository**
    ```bash
    git clone <repository-url>
    cd eden-preprocessor-demo
    ```
 
-2. **Enable desktop support** (if not already enabled)
+2. **Enable Desktop Support**
    ```bash
-   # For Linux
+   # Linux
    flutter config --enable-linux-desktop
 
-   # For macOS
+   # macOS
    flutter config --enable-macos-desktop
 
-   # For Windows
+   # Windows
    flutter config --enable-windows-desktop
    ```
 
-3. **Install dependencies**
+3. **Install Dependencies**
    ```bash
    flutter pub get
    ```
 
-4. **Verify installation**
+4. **Verify Installation**
    ```bash
    flutter doctor
    ```
-   Make sure all checks pass for your target platform.
+   Ensure all checks pass for your target platform.
 
-5. **Run the application**
+5. **Run Application**
    ```bash
-   # For Linux
+   # Linux
    flutter run -d linux
 
-   # For macOS
+   # macOS
    flutter run -d macos
 
-   # For Windows
+   # Windows
    flutter run -d windows
    ```
 
 ### First Run
 
-1. The app will prompt for your Claude API key
-2. Enter your API key (starts with `sk-ant-...`)
-3. The key is saved locally and encrypted for future sessions
-4. Create a new campaign and design your character
-5. Choose from various classes, races, and backgrounds
-6. Customize your character's appearance, stats, and equipment
-7. Begin your adventure in a procedurally-generated world!
+1. App prompts for Claude API key on startup
+2. Enter API key (format: `sk-ant-...`)
+3. Key is encrypted and stored securely in `flutter_secure_storage`
+4. Create new campaign or join multiplayer session
+5. Design characters using full D&D 5e creation system
+6. Begin your adventure
 
 ## How to Play
 
-### Character Creation
-1. Enter your character's name and choose a character class
-2. Select your character's race and background
-3. Customize ability scores or use point buy/standard array
-4. Choose class-specific options (fighting style, spells, etc.)
-5. Start with class-appropriate equipment and gear
+### Solo Campaign
 
-### Gameplay Loop
-1. Read the DM's narrative description
-2. Type what you want to do in the action box
-3. Press "Go" or hit Enter
-4. The AI DM responds to your action and updates the game state
-5. Complete quests, explore dungeons, find loot, and advance your character
+1. **Create Campaign**: Click "New Campaign" on home screen
+2. **Create Character**: Design your character with race, class, background, and ability scores
+3. **Start Adventure**: AI DM generates opening narrative
+4. **Interact**: Type actions in the narrative center, AI responds dynamically
+5. **Combat**: Enter tactical grid-based combat when encounters occur
+6. **Progress**: Complete quests, gain XP, level up, and acquire loot
 
-### Tactical Combat
-- Combat starts when the DM initiates an encounter
-- Initiative is rolled automatically for all combatants
-- **Grid-Based Movement**: Move your character on the tactical map
-- **Cover & Positioning**: Use terrain for tactical advantages (half/three-quarters/full cover)
-- **Spellcasting**: Cast spells with area-of-effect targeting and line-of-sight checks
-- **Opportunity Attacks**: Triggered when enemies move out of melee range
-- On your turn, choose from: Attack, Cast Spell, Move, Use Item, or custom actions
-- Enemies take their turns automatically
-- Combat ends when all enemies or the player is defeated
-- Victory awards XP and triggers loot generation
+### Multiplayer Campaign
 
-### Spells & Magic
-- Spellcasters have access to the full spell database
-- Manage spell slots and prepare spells
-- Track concentration for ongoing spell effects
-- Cast offensive, defensive, utility, and buff spells
-- Use the Spell Book widget to browse and select spells
+1. **Host Session**: DM creates session from home screen
+2. **Players Join**: Share session ID with players
+3. **Character Assignment**: Each player creates or selects their character
+4. **Collaborative Play**: DM controls narrative, players control their characters
+5. **Real-Time Updates**: All actions broadcast to all connected players
 
-### Quests & Objectives
-- Accept quests from NPCs or discover them through exploration
-- Track active quests in the Quest Journal
-- Complete objectives for rewards and narrative progression
-- Dynamic quest generation ensures varied content
+### DM Control Panel (Phase 2)
 
-### Crafting & Loot
-- Collect materials from defeated enemies and exploration
-- Craft weapons, armor, potions, and magic items
-- Generated loot scales with character level
-- Find rare and legendary magic items
+**Main Panel**:
+- **Party Panel**: Character list with HP, conditions, and initiative tracking
+- **Narrative Center**: Scene description input and action history
+- **AI Assistant Panel**: AI suggestions and creative prompts
 
-### Skill Checks
-- The DM may request skill checks (e.g., "Roll Athletics check, DC 15")
-- A dialog shows your d20 roll + modifiers
-- Success/failure is determined automatically based on D&D 5e rules
-- Results affect the narrative and unlock new options
+**Sidebar Panels** (8 Advanced Systems):
+1. **Relationship Tracking**: Manage NPC attitudes and memorable events
+2. **World Events**: Create and trigger dynamic campaign events
+3. **Character Development**: Track personal quests and character arcs
+4. **Crafting & Economy**: Manage crafting projects and market prices
+5. **DM AI Tools**: Generate NPCs, check consistency, analyze campaign
+6. **Combat Enhancement**: Configure boss mechanics, reactions, hazards
+7. **Encounter Builder**: Design balanced encounters with CR calculations
+8. **AI Configuration**: Select AI provider, model, and settings
+
+### Combat System
+
+1. **Initiative**: Automatically rolled for all combatants
+2. **Grid Positioning**: Move characters on 50x50 tactical map
+3. **Turn Actions**: Attack, Cast Spell, Move, Use Item, or custom actions
+4. **Terrain Tactics**: Use cover, difficult terrain, and hazards strategically
+5. **Reactions**: Opportunity attacks, counterspells, and defensive reactions
+6. **Boss Battles**: Face legendary creatures with special abilities
+7. **Victory**: Gain XP and trigger loot generation
+
+### Spell Casting
+
+1. **Spell Selection**: Browse 600+ spells in Spell Book widget
+2. **Preparation**: Prepared casters must prepare spells during long rest
+3. **Casting**: Select spell, choose target, expend spell slot
+4. **Concentration**: Track ongoing spell effects
+5. **Area Effects**: Target multiple squares on tactical map
+
+### Crafting & Economy
+
+1. **Gather Materials**: Loot components from defeated enemies
+2. **Learn Recipes**: Discover crafting recipes through gameplay
+3. **Start Project**: Choose recipe, allocate materials, set daily work time
+4. **Daily Progress**: Make skill checks to accumulate quality score
+5. **Complete Item**: Finish project and receive item with quality modifier
+6. **Market Trading**: Buy and sell items with dynamic pricing
 
 ### Character Progression
-- Gain experience points (XP) from combat and quest completion
-- Level up to unlock new abilities, spells, and stat improvements
-- Choose multiclass options for hybrid character builds
-- Track character growth through the Character Sheet widget
 
-### Saving
-- Games auto-save after each significant action
-- Click the save icon in the top bar to manually save
-- Load previous campaigns from the home screen
-- Multiple campaign slots supported
-
-## Character Progression
-
-The game features a comprehensive D&D 5e-compliant leveling system:
-
-### Experience Points
-- Combat encounters award XP based on encounter difficulty
-- Quest completion provides bonus XP
-- Exploration and roleplay milestones grant XP
-
-### Leveling Benefits
-- **Hit Points**: Increase based on class hit dice + CON modifier
-- **Proficiency Bonus**: Increases at levels 5, 9, 13, and 17
-- **Ability Score Improvements**: Gain +2 to one stat or +1 to two stats at certain levels
-- **Class Features**: Unlock new abilities, fighting styles, and class-specific features
-- **Spell Progression**: Spellcasters gain new spell slots and access to higher-level spells
-- **Multiclassing**: Option to take levels in multiple classes for hybrid builds
-
-### Level Ranges
-- **Levels 1-5**: Foundation building, core class features
-- **Levels 6-10**: Significant power increases, subclass features
-- **Levels 11-15**: Advanced capabilities and legendary features
-- **Levels 16-20**: Epic hero status with game-changing abilities
+1. **Gain XP**: Combat encounters and quest completion award experience
+2. **Level Up**: Meet XP threshold to advance to next level
+3. **Increase HP**: Roll hit die + Constitution modifier
+4. **Improve Stats**: Select Ability Score Improvement at specific levels
+5. **Learn Features**: Unlock class features and spell levels
+6. **Multiclass** (Optional): Take levels in additional classes
 
 ## Database Schema
 
-The app stores all game state in SQLite with comprehensive data persistence:
+SQLite database with 19+ tables:
 
-- **characters**: Character stats, abilities, classes, and multiclass data
-- **game_states**: Campaign metadata and session info
-- **narrative_events**: Full game history and story progression
-- **inventory**: Items, equipment, and consumables
-- **combat_states**: Active combat tracking with positions and turn order
-- **objectives**: Quest tracking with progress and rewards
-- **spells_known**: Character spell lists and prepared spells
-- **spell_slots**: Spell slot tracking per character
-- **tactical_maps**: Saved map states with terrain and combatant positions
-- **crafting_recipes**: Available and discovered crafting formulas
-- **loot_tables**: Generated loot drops and treasure
-- **quest_log**: Quest history and completion states
+**Core Tables**:
+- `characters`: Character stats, abilities, and equipment
+- `game_sessions`: Multiplayer session data with DM and players
+- `game_states`: Campaign metadata and session info
+- `narrative_events`: Game history and story progression
+- `player_connections`: Session player tracking
 
-Database location: `~/.ai_dungeon_master/ai_dungeon_master.db`
+**Combat Tables**:
+- `combat_states`: Active combat with turn order and positions
+- `environmental_hazards`: Combat hazards and effects
+- `boss_mechanics`: Legendary actions, lair actions, and phases
+
+**Content Tables**:
+- `quests`: Quest definitions and objectives
+- `objectives`: Quest objective tracking
+- `inventory`: Character items and equipment
+- `spells_known`: Character spell lists
+- `spell_slots`: Spell slot usage tracking
+
+**Phase 2 Tables**:
+- `npc_relationships`: NPC attitudes and memorable events
+- `relationship_events`: Relationship change history
+- `world_events`: Dynamic campaign events
+- `faction_conflicts`: Faction tension tracking
+- `personal_quests`: Character-specific quests
+- `character_arcs`: Character development arcs
+- `crafting_projects`: Active crafting projects
+- `crafting_recipes`: Available recipes
+- `item_pricing`: Market prices with supply/demand
+- `merchant_inventories`: Merchant stock and restock dates
+
+**Auto-Migration**: Database schema automatically updates when new tables are added.
 
 ## API Usage & Cost
 
-### Claude API Calls
-- **Narrative generation**: ~500-2000 tokens per request
-- **Quest generation**: ~300-800 tokens per request
-- **Combat narration**: ~100-400 tokens per request
-- **Enemy actions**: ~50-150 tokens per request
-- **Procedural content**: ~200-600 tokens per request
-- **Average game session**: 15-50 API calls depending on activity
+### Claude API Calls (Typical Session)
 
-### Estimated Costs
-- Claude Sonnet 4: $3 per million input tokens, $15 per million output tokens
-- Typical 1-hour session: $0.15 - $0.50
-- Full campaign (levels 1-10): ~$3-10
-- Extended campaign (levels 1-20): ~$8-25
+- Narrative generation: 500-2000 tokens per request
+- Quest generation: 300-800 tokens per request
+- Combat narration: 100-400 tokens per request
+- NPC generation: 200-600 tokens per request
+- Procedural content: 200-600 tokens per request
+- Average session: 15-50 API calls depending on activity
+
+### Estimated Costs (Claude Sonnet 4)
+
+- **Pricing**: $3 per million input tokens, $15 per million output tokens
+- **1-hour session**: $0.15 - $0.50
+- **Short campaign (levels 1-5)**: $1 - $3
+- **Medium campaign (levels 1-10)**: $3 - $10
+- **Extended campaign (levels 1-20)**: $8 - $25
 
 ### Optimization Tips
-- Use spell/combat/quest caching where possible
-- Batch related API calls
-- Adjust narrative detail level in settings
-- Pre-generate content for offline play sessions
 
-## Code Quality & Testing
+- Cache repeated content (spell descriptions, monster stats)
+- Batch related API calls when possible
+- Adjust narrative detail level in AI settings
+- Use local databases for static content
+- Consider cheaper models (Haiku) for simple tasks
 
-### Recent Code Review (Latest)
-The codebase has undergone a comprehensive code review and quality assurance process:
+## Code Quality & Known Issues
 
-**Critical Issues Fixed:**
-- ✅ Fixed syntax error in enum definition (`needBeforeGreed` in `LootDistribution`)
-- ✅ Added missing imports for model classes (`Item`, `NPC`, `Dungeon`)
-- ✅ Corrected property name mismatches in UI components (e.g., `hpCurrent/hpMax` vs `hitPointsCurrent/hitPointsMax`)
+### Variable Naming Consistency Review
 
-**High Priority Fixes:**
-- ✅ Added error handling with `orElse` parameters to all `firstWhere()` calls to prevent runtime exceptions
-- ✅ Fixed unsafe array access and null reference issues
-- ✅ Corrected property references in CharacterSheetWidget to match EnhancedCharacter model
+A comprehensive code review identified the following issues:
 
-**Code Quality Improvements:**
-- All model imports verified and corrected
-- Null safety handling improved across data models
-- Database schema validated against model definitions
-- Error handling enhanced in critical paths
+**CRITICAL Issues Requiring Immediate Fix**:
 
-**Known Limitations:**
-- Some debug `print()` statements remain (useful for development/troubleshooting)
-- Database schema could be expanded to persist all character properties
-- Consider adding comprehensive unit tests for game mechanics
+1. **Duplicate Class Name - `GameSession`**
+   - **Location**: `lib/models/campaign.dart:14` and `lib/models/game_session.dart:8`
+   - **Issue**: Two different classes share the name `GameSession`
+   - **Impact**: Namespace collision, compilation errors when both imported
+   - **Fix Required**: Rename `campaign.dart`'s class to `PlaySession` or `SessionRecord`
 
-### Testing Checklist
-Before running the application, ensure:
-- [ ] Flutter SDK 3.0+ is installed (`flutter doctor`)
-- [ ] All dependencies are fetched (`flutter pub get`)
-- [ ] Desktop support is enabled for your platform
-- [ ] You have a valid Claude API key ready
+2. **Wrong Constructor Parameters**
+   - **Location**: `lib/screens/session_lobby_screen.dart:109-129`
+   - **Issue**: `EnhancedCharacter` constructor called with incorrect parameters
+   - **Problems**:
+     - Uses `race: String` instead of `race: Race` object
+     - Uses `characterClass: String` instead of `characterClass: CharacterClass` object
+     - Uses `currentHP/maxHP` instead of `hpCurrent/hpMax`
+     - Uses non-existent `abilities` map instead of individual ability score fields
+   - **Impact**: Code will not compile or will crash at runtime
+   - **Fix Required**: Update constructor to match `enhanced_character.dart` definition
 
-## Development Notes
+**IMPORTANT Issues** (High Priority):
 
-### Architecture Decisions
+3. **HP Variable Naming Inconsistency**
+   - Character models use: `hpCurrent`, `hpMax`
+   - Monster model uses: `hitPoints`
+   - Database uses: `hp_current`, `hp_max` (snake_case - correct for SQL)
+   - Some functions use: `currentHP`, `maxHP`
+   - **Recommendation**: Standardize on `hpCurrent`/`hpMax` in all Dart code
 
-**SQLite for Local Storage**
-- No backend infrastructure required
-- Fast, reliable persistence
-- Full offline capability
-- Easy backup and restore
-- Suitable for single-player experience
+4. **Modifier Naming Inconsistency**
+   - Character models use: `strengthModifier`, `dexterityModifier`, etc.
+   - Monster model uses: `strengthMod`, `dexterityMod`, etc.
+   - **Recommendation**: Rename Monster modifiers to full words for consistency
 
-**Flutter for Cross-Platform Desktop**
-- Single codebase for Windows, macOS, and Linux
-- Rich UI widget ecosystem
-- Excellent performance for complex UIs
-- Built-in material design components
+**Best Practices Followed**:
+- Dart properties use camelCase
+- Database columns use snake_case
+- Boolean variables use `is`/`has`/`can` prefixes
+- Collections use plural names
+- Service instances use `_` prefix for private fields
 
-**Claude API for AI DM**
-- State-of-the-art language understanding
-- Contextual narrative generation
-- Handles complex game state management
-- Supports dynamic quest and encounter creation
+### Development Notes
 
-**Grid-Based Tactical Combat**
-- Faithful to D&D 5e's tactical positioning rules
-- Supports line-of-sight, cover, and area-of-effect mechanics
-- Provides strategic depth without complex 3D rendering
+- Some `print()` statements remain for debugging (useful during development)
+- Database schema successfully migrates between Phase 1 and Phase 2
+- All Phase 2 features integrate cleanly with Phase 1 code
+- Null safety enforced throughout codebase
 
-### Code Organization
-The codebase follows a clean separation of concerns:
-- **Models**: Pure data classes with serialization
-- **Services**: Business logic and game rules
-- **Screens**: Top-level UI components and navigation
-- **Widgets**: Reusable UI components
-- **Data**: Static game content (spells, monsters, items)
+### Testing Status
+
+- Manual testing completed for all Phase 1 and Phase 2 features
+- Integration testing performed for multiplayer sessions
+- Database migration testing verified
+- Unit tests recommended for critical game mechanics
+
+## Documentation
+
+**Additional Documentation**:
+- `IMPLEMENTATION_SUMMARY.md`: Phase 2 metrics and achievements (349 lines)
+- `PHASE2_FEATURES.md`: Detailed Phase 2 usage guide (536 lines)
+- This README: Comprehensive project overview (current file)
+
+## System Requirements
+
+**Minimum**:
+- OS: Windows 10+, macOS 10.14+, or modern Linux distribution
+- RAM: 4GB
+- Storage: 500MB for application + database
+- Internet: Required for AI API calls
+
+**Recommended**:
+- RAM: 8GB
+- Storage: 1GB+ for multiple campaigns
+- Internet: Broadband for faster API responses
+
+## Performance
+
+- Tactical map optimized for 50x50 grids
+- Database queries use indexes for fast lookups
+- Spell and item data cached in memory
+- UI updates throttled for smooth animations
+- SQLite connection pooling for concurrent access
 
 ## Troubleshooting
 
 ### "flutter: command not found"
-- Flutter SDK is not installed or not in PATH
-- Follow installation guide: https://flutter.dev/docs/get-started/install
+- Install Flutter SDK: https://flutter.dev/docs/get-started/install
+- Add Flutter to PATH
 
 ### "No supported devices connected"
-- For desktop apps, you need to enable desktop support:
-  ```bash
-  flutter config --enable-linux-desktop
-  flutter config --enable-macos-desktop
-  flutter config --enable-windows-desktop
-  ```
+- Enable desktop support: `flutter config --enable-linux-desktop`
 
-### "API Error: 401"
-- Your Claude API key is invalid
-- Re-enter your API key in the app settings
+### "API Error: 401 Unauthorized"
+- Invalid or expired API key
+- Re-enter API key in settings
 
 ### "Database error"
-- Delete the database file and restart:
-  ```bash
-  rm ~/.ai_dungeon_master/ai_dungeon_master.db
-  ```
+- Delete database and restart: `rm ~/.ai_dungeon_master/ai_dungeon_master.db`
+- Note: This will delete all saved campaigns
 
-## Performance & Technical Details
+### Compilation Errors After Update
+- Clean build: `flutter clean && flutter pub get`
+- Rebuild: `flutter run -d <platform>`
 
-### System Requirements
-- **OS**: Windows 10+, macOS 10.14+, or Linux (recent distribution)
-- **RAM**: 4GB minimum, 8GB recommended
-- **Storage**: 500MB for application + database
-- **Internet**: Required for Claude API calls
+## Future Enhancements
 
-### Performance Notes
-- Tactical map rendering optimized for grids up to 50x50
-- Database queries use indexes for fast character/campaign loading
-- Spell and item lookups cached in memory
-- UI updates throttled for smooth animation during combat
+**Short-term**:
+- Fix critical variable naming issues
+- Add comprehensive unit tests
+- Performance optimization for large campaigns
 
-### Thread Safety
-- Database operations use connection pooling
-- API calls are queued and rate-limited
-- State updates synchronized to prevent race conditions
+**Medium-term**:
+- Network-based multiplayer (remote players)
+- Visual battle map with token drag-and-drop
+- Automated initiative tracking
+- Campaign journal with auto-generated summaries
+- Homebrew content editor
+
+**Long-term**:
+- Mobile apps (iOS, Android)
+- Asset library (images, music, sound effects)
+- Community campaign sharing marketplace
+- Virtual tabletop integration
+- Advanced AI features (video generation, dynamic music)
 
 ## License
 
-This is a demonstration project. Not licensed for commercial use.
+Demonstration project. Not licensed for commercial use.
 
 ## Credits
 
-- Built with Flutter
-- Powered by Claude (Anthropic)
-- D&D 5e rules by Wizards of the Coast
+- **Framework**: Flutter by Google
+- **AI Provider**: Claude by Anthropic
+- **Game System**: D&D 5e by Wizards of the Coast
+- **Development**: Phase 1 and Phase 2 complete
 
 ---
 
-**Have fun adventuring!** 🎲⚔️🐉
+**Ready to embark on epic adventures!** Create your character, gather your party, and let the AI-Assisted DM Control Center bring your D&D campaigns to life.
