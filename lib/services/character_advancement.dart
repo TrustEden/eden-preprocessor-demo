@@ -171,12 +171,15 @@ class CharacterAdvancement {
     switch (ability.toLowerCase()) {
       case 'strength':
         character.baseStrength = min(20, character.baseStrength + increase);
+        character.asiIncreases['Strength'] = (character.asiIncreases['Strength'] ?? 0) + increase;
         break;
       case 'dexterity':
         character.baseDexterity = min(20, character.baseDexterity + increase);
+        character.asiIncreases['Dexterity'] = (character.asiIncreases['Dexterity'] ?? 0) + increase;
         break;
       case 'constitution':
         character.baseConstitution = min(20, character.baseConstitution + increase);
+        character.asiIncreases['Constitution'] = (character.asiIncreases['Constitution'] ?? 0) + increase;
         // Recalculate HP when constitution increases
         int conBonus = _getAbilityModifier(character.constitution);
         character.hpMax += conBonus * character.level;
@@ -184,12 +187,15 @@ class CharacterAdvancement {
         break;
       case 'intelligence':
         character.baseIntelligence = min(20, character.baseIntelligence + increase);
+        character.asiIncreases['Intelligence'] = (character.asiIncreases['Intelligence'] ?? 0) + increase;
         break;
       case 'wisdom':
         character.baseWisdom = min(20, character.baseWisdom + increase);
+        character.asiIncreases['Wisdom'] = (character.asiIncreases['Wisdom'] ?? 0) + increase;
         break;
       case 'charisma':
         character.baseCharisma = min(20, character.baseCharisma + increase);
+        character.asiIncreases['Charisma'] = (character.asiIncreases['Charisma'] ?? 0) + increase;
         break;
     }
   }

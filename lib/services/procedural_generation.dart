@@ -303,8 +303,9 @@ class DungeonGenerator {
     treasure.add(Item(
       id: 'gold_${DateTime.now().millisecondsSinceEpoch}',
       name: 'Gold Coins',
-      description: '$goldAmount gold pieces',
+      effect: '$goldAmount gold pieces',
       type: 'currency',
+      weight: 0,
       value: goldAmount,
     ));
 
@@ -314,10 +315,10 @@ class DungeonGenerator {
       treasure.add(Item(
         id: 'potion_healing_${DateTime.now().millisecondsSinceEpoch}',
         name: 'Potion of Healing',
-        description: 'Restores 2d4+2 hit points',
-        type: 'potion',
+        effect: '2d4+2',
+        type: 'consumable',
+        weight: 1,
         value: 50,
-        healingDice: '2d4+2',
       ));
     }
 
@@ -326,11 +327,12 @@ class DungeonGenerator {
       treasure.add(Item(
         id: 'magic_weapon_${DateTime.now().millisecondsSinceEpoch}',
         name: '+1 Longsword',
-        description: 'A finely crafted longsword with a +1 bonus',
+        effect: 'A finely crafted longsword with a +1 bonus',
         type: 'weapon',
+        weight: 3,
         value: 500,
-        weaponDamage: '1d8+1',
-        weaponType: 'martial',
+        damageDice: '1d8+1',
+        damageType: 'martial',
       ));
     }
 
@@ -378,14 +380,14 @@ class DungeonGenerator {
 class NPCGenerator {
   static final Random _rng = Random();
 
-  static NPC generate() {
+  static GeneratedNPC generate() {
     String name = _generateName();
     String race = _selectRace();
     String occupation = _selectOccupation();
     String personality = _generatePersonality();
     String quirk = _generateQuirk();
 
-    return NPC(
+    return GeneratedNPC(
       id: 'npc_${DateTime.now().millisecondsSinceEpoch}_${_rng.nextInt(1000)}',
       name: name,
       race: race,
@@ -490,7 +492,7 @@ class NPCGenerator {
   }
 }
 
-class NPC {
+class GeneratedNPC {
   String id;
   String name;
   String race;
@@ -498,7 +500,7 @@ class NPC {
   String personality;
   String quirk;
 
-  NPC({
+  GeneratedNPC({
     required this.id,
     required this.name,
     required this.race,
@@ -520,7 +522,7 @@ class NPC {
         'quirk': quirk,
       };
 
-  factory NPC.fromJson(Map<String, dynamic> json) => NPC(
+  factory GeneratedNPC.fromJson(Map<String, dynamic> json) => GeneratedNPC(
         id: json['id'] as String,
         name: json['name'] as String,
         race: json['race'] as String,

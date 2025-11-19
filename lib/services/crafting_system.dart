@@ -135,8 +135,9 @@ class CraftingSystem {
         resultItem: Item(
           id: 'potion_invisibility',
           name: 'Potion of Invisibility',
-          description: 'Become invisible for 1 hour.',
-          type: 'potion',
+          effect: 'Become invisible for 1 hour.',
+          type: 'consumable',
+          weight: 1,
           value: 500,
         ),
       );
@@ -182,8 +183,9 @@ class CraftingSystem {
       resultItem: Item(
         id: 'scroll_${spell.id}',
         name: 'Spell Scroll (${spell.name})',
-        description: 'A scroll containing the ${spell.name} spell.',
-        type: 'scroll',
+        effect: 'A scroll containing the ${spell.name} spell.',
+        type: 'consumable',
+        weight: 0,
         value: baseCost * 2,
       ),
     );
@@ -287,8 +289,9 @@ class CraftingSystem {
         resultItem: Item(
           id: 'silver_arrows',
           name: 'Silver Arrows (20)',
-          description: '20 arrows tipped with silver. Effective against lycanthropes.',
+          effect: '20 arrows tipped with silver. Effective against lycanthropes.',
           type: 'ammunition',
+          weight: 1,
           value: 100,
         ),
       );
@@ -354,7 +357,7 @@ class CraftingSystem {
         resultItem: recipe.resultItem,
         daysSpent: recipe.craftingDays,
         goldSpent: recipe.goldCost,
-        hasF law: true,
+        hasFlaw: true,
       );
     } else {
       // Failure - materials lost
@@ -362,7 +365,7 @@ class CraftingSystem {
         success: false,
         message: 'You fail to craft ${recipe.name}. Materials are lost.',
         daysSpent: recipe.craftingDays,
-        goldSpent: recipe.goldCost ~/  2, // Half materials wasted
+        goldSpent: recipe.goldCost ~/ 2, // Half materials wasted
       );
     }
   }

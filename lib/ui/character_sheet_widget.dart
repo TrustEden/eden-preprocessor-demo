@@ -705,9 +705,9 @@ class _CharacterSheetWidgetState extends State<CharacterSheetWidget>
                 'Size', widget.character.race.size),
             _buildInfoRow(
                 'Speed', '${widget.character.race.speed} ft'),
-            if (widget.character.race.darkvision > 0)
+            if (widget.character.race.darkvisionRange != null && widget.character.race.darkvisionRange! > 0)
               _buildInfoRow('Darkvision',
-                  '${widget.character.race.darkvision} ft'),
+                  '${widget.character.race.darkvisionRange} ft'),
           ],
         ),
       ),

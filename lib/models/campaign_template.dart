@@ -220,7 +220,7 @@ class QuestTemplate {
   String description;
   String type; // main, side, personal
   String giver; // NPC id
-  List<QuestObjective> objectives;
+  List<QuestObjectiveTemplate> objectives;
   Map<String, dynamic> rewards;
   List<String> prerequisites; // Quest IDs that must be completed first
   int recommendedLevel;
@@ -231,7 +231,7 @@ class QuestTemplate {
     required this.description,
     required this.type,
     required this.giver,
-    List<QuestObjective>? objectives,
+    List<QuestObjectiveTemplate>? objectives,
     Map<String, dynamic>? rewards,
     List<String>? prerequisites,
     required this.recommendedLevel,
@@ -257,21 +257,21 @@ class QuestTemplate {
         description: json['description'],
         type: json['type'],
         giver: json['giver'],
-        objectives: (json['objectives'] as List?)?.map((o) => QuestObjective.fromJson(o)).toList(),
+        objectives: (json['objectives'] as List?)?.map((o) => QuestObjectiveTemplate.fromJson(o)).toList(),
         rewards: Map<String, dynamic>.from(json['rewards'] ?? {}),
         prerequisites: List<String>.from(json['prerequisites'] ?? []),
         recommendedLevel: json['recommendedLevel'],
       );
 }
 
-class QuestObjective {
+class QuestObjectiveTemplate {
   String id;
   String description;
   String type; // kill, collect, explore, talk, escort
   Map<String, dynamic> parameters;
   bool optional;
 
-  QuestObjective({
+  QuestObjectiveTemplate({
     required this.id,
     required this.description,
     required this.type,
@@ -287,7 +287,7 @@ class QuestObjective {
         'optional': optional,
       };
 
-  factory QuestObjective.fromJson(Map<String, dynamic> json) => QuestObjective(
+  factory QuestObjectiveTemplate.fromJson(Map<String, dynamic> json) => QuestObjectiveTemplate(
         id: json['id'],
         description: json['description'],
         type: json['type'],

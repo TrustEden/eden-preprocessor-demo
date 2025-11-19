@@ -370,8 +370,6 @@ class TextToSpeechService {
         return 'en-GB-Neural2-D'; // British male (dramatic)
       case VoiceType.elder:
         return 'en-US-Neural2-I'; // Older male
-      default:
-        return 'en-US-Neural2-J';
     }
   }
 

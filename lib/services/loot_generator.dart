@@ -17,14 +17,14 @@ class LootTable {
   String name;
   int minChallengeRating;
   int maxChallengeRating;
-  Map<ItemRarity, double> raritychances; // % chance for each rarity
+  Map<ItemRarity, double> rarityChances; // % chance for each rarity
 
   LootTable({
     required this.id,
     required this.name,
     required this.minChallengeRating,
     required this.maxChallengeRating,
-    required this.raritychances,
+    required this.rarityChances,
   });
 }
 
@@ -54,12 +54,12 @@ class TreasureHoard {
   int get totalValueInGold {
     return goldPieces +
         (platinumPieces * 10) +
-        (electrumPieces ~/ 2) +
-        (silverPieces ~/ 10) +
-        (copperPieces ~/ 100) +
-        items.fold(0, (sum, item) => sum + item.value) +
-        gems.fold(0, (sum, gem) => sum + gem.value) +
-        artObjects.fold(0, (sum, art) => sum + art.value);
+        (electrumPieces ~/ 2).toInt() +
+        (silverPieces ~/ 10).toInt() +
+        (copperPieces ~/ 100).toInt() +
+        items.fold<int>(0, (sum, item) => sum + item.value) +
+        gems.fold<int>(0, (sum, gem) => sum + gem.value) +
+        artObjects.fold<int>(0, (sum, art) => sum + art.value);
   }
 
   void addCurrency({
@@ -94,7 +94,7 @@ class LootGenerator {
   static TreasureHoard generate({
     required double challengeRating,
     TreasureHoardSize hoardSize = TreasureHoardSize.individual,
-    bool includemagicItems = true,
+    bool includeMagicItems = true,
   }) {
     var hoard = TreasureHoard();
 
@@ -107,7 +107,7 @@ class LootGenerator {
     }
 
     // Generate magic items based on CR
-    if (includemagicItems) {
+    if (includeMagicItems) {
       _generateMagicItems(hoard, challengeRating, hoardSize);
     }
 
@@ -137,7 +137,7 @@ class LootGenerator {
     var hoard = generate(
       challengeRating: challengeRating,
       hoardSize: TreasureHoardSize.huge,
-      includemagicItems: true,
+      includeMagicItems: true,
     );
 
     // Boss always has at least one magic item
@@ -253,8 +253,9 @@ class LootGenerator {
     return Item(
       id: 'gem_${name.toLowerCase().replaceAll(' ', '_')}',
       name: name,
-      description: 'A valuable gemstone.',
+      effect: 'A valuable gemstone.',
       type: 'gem',
+      weight: 0,
       value: value,
     );
   }
@@ -293,8 +294,9 @@ class LootGenerator {
     return Item(
       id: 'art_${name.toLowerCase().replaceAll(' ', '_')}',
       name: name,
-      description: 'A valuable art object.',
+      effect: 'A valuable art object.',
       type: 'art',
+      weight: 1,
       value: value,
     );
   }
@@ -405,7 +407,7 @@ class LootGenerator {
     var hoard = generate(
       challengeRating: effectiveCR,
       hoardSize: size,
-      includemagicItems: isMajorQuest,
+      includeMagicItems: isMajorQuest,
     );
 
     // Quest rewards tend to be gold-heavy
@@ -435,8 +437,9 @@ class LootGenerator {
     return Item(
       id: 'random_${type}_${_rng.nextInt(10000)}',
       name: 'Random $type',
-      description: 'A random item.',
+      effect: 'A random item.',
       type: type,
+      weight: 1,
       value: targetValue,
     );
   }
@@ -460,8 +463,9 @@ class LootGenerator {
       loot.add(Item(
         id: 'currency_${DateTime.now().millisecondsSinceEpoch}',
         name: '${hoard.goldPieces} Gold, ${hoard.platinumPieces} Platinum',
-        description: 'Currency from treasure hoard',
+        effect: 'Currency from treasure hoard',
         type: 'currency',
+        weight: 0,
         value: hoard.totalValueInGold,
       ));
     }
