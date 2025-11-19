@@ -969,4 +969,424 @@ class DatabaseService {
       orderBy: 'last_saved DESC',
     );
   }
+
+  // ============================================================================
+  // PHASE 2: Gameplay Depth Features Database Support
+  // ============================================================================
+
+  /// Ensure Phase 2 tables exist (migration support)
+  Future<void> _ensurePhase2TablesExist(Database db) async {
+    // Check if Phase 2 tables exist
+    var result = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='npc_relationships'",
+    );
+
+    if (result.isEmpty) {
+      // Create all Phase 2 tables
+
+      // NPC Relationships table
+      await db.execute('''
+        CREATE TABLE npc_relationships (
+          id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          npc_id TEXT NOT NULL,
+          npc_name TEXT NOT NULL,
+          character_id TEXT NOT NULL,
+          current_attitude INTEGER NOT NULL DEFAULT 0,
+          relationship_data TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // World Events table
+      await db.execute('''
+        CREATE TABLE world_events (
+          event_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          event_data TEXT NOT NULL,
+          event_status TEXT NOT NULL,
+          scheduled_day INTEGER,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Faction Conflicts table
+      await db.execute('''
+        CREATE TABLE faction_conflicts (
+          conflict_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          faction1_id TEXT NOT NULL,
+          faction2_id TEXT NOT NULL,
+          conflict_data TEXT NOT NULL,
+          conflict_status TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Personal Quests table
+      await db.execute('''
+        CREATE TABLE personal_quests (
+          quest_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          character_id TEXT NOT NULL,
+          quest_data TEXT NOT NULL,
+          quest_status TEXT NOT NULL,
+          progress_percentage INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Character Arcs table
+      await db.execute('''
+        CREATE TABLE character_arcs (
+          arc_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          character_id TEXT NOT NULL,
+          arc_data TEXT NOT NULL,
+          current_stage TEXT NOT NULL,
+          transformation_level INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Crafting Projects table
+      await db.execute('''
+        CREATE TABLE crafting_projects (
+          project_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          character_id TEXT NOT NULL,
+          recipe_id TEXT NOT NULL,
+          project_data TEXT NOT NULL,
+          project_status TEXT NOT NULL,
+          progress_percentage INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Crafting Recipes table (global, not session-specific)
+      await db.execute('''
+        CREATE TABLE crafting_recipes (
+          recipe_id TEXT PRIMARY KEY,
+          recipe_data TEXT NOT NULL
+        )
+      ''');
+
+      // Item Pricing table (global market data)
+      await db.execute('''
+        CREATE TABLE item_pricing (
+          item_id TEXT PRIMARY KEY,
+          pricing_data TEXT NOT NULL
+        )
+      ''');
+
+      // Merchant Inventories table
+      await db.execute('''
+        CREATE TABLE merchant_inventories (
+          merchant_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          inventory_data TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Environmental Hazards table (combat-specific)
+      await db.execute('''
+        CREATE TABLE environmental_hazards (
+          hazard_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          hazard_data TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+
+      // Boss Mechanics table
+      await db.execute('''
+        CREATE TABLE boss_mechanics (
+          monster_id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          mechanics_data TEXT NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES game_sessions (session_id)
+        )
+      ''');
+    }
+  }
+
+  /// Save Phase 2 data for a session
+  Future<void> savePhase2Data({
+    required String sessionId,
+    Map<String, dynamic>? relationshipNetworkData,
+    List<Map<String, dynamic>>? worldEventsData,
+    List<Map<String, dynamic>>? factionConflictsData,
+    List<Map<String, dynamic>>? personalQuestsData,
+    List<Map<String, dynamic>>? characterArcsData,
+    List<Map<String, dynamic>>? craftingProjectsData,
+    List<Map<String, dynamic>>? merchantInventoriesData,
+  }) async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    // Save NPC relationships
+    if (relationshipNetworkData != null) {
+      final relationships = relationshipNetworkData['npcRelationships'] as Map<String, dynamic>?;
+      if (relationships != null) {
+        for (var entry in relationships.entries) {
+          final relationshipData = entry.value as Map<String, dynamic>;
+          await db.insert(
+            'npc_relationships',
+            {
+              'id': entry.key,
+              'session_id': sessionId,
+              'npc_id': relationshipData['npcId'],
+              'npc_name': relationshipData['npcName'],
+              'character_id': relationshipData['characterId'],
+              'current_attitude': relationshipData['currentAttitude'],
+              'relationship_data': jsonEncode(relationshipData),
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      }
+    }
+
+    // Save world events
+    if (worldEventsData != null) {
+      for (var eventData in worldEventsData) {
+        await db.insert(
+          'world_events',
+          {
+            'event_id': eventData['eventId'],
+            'session_id': sessionId,
+            'event_data': jsonEncode(eventData),
+            'event_status': eventData['eventStatus'],
+            'scheduled_day': eventData['scheduledDay'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    // Save faction conflicts
+    if (factionConflictsData != null) {
+      for (var conflictData in factionConflictsData) {
+        await db.insert(
+          'faction_conflicts',
+          {
+            'conflict_id': conflictData['conflictId'],
+            'session_id': sessionId,
+            'faction1_id': conflictData['faction1Id'],
+            'faction2_id': conflictData['faction2Id'],
+            'conflict_data': jsonEncode(conflictData),
+            'conflict_status': conflictData['conflictStatus'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    // Save personal quests
+    if (personalQuestsData != null) {
+      for (var questData in personalQuestsData) {
+        await db.insert(
+          'personal_quests',
+          {
+            'quest_id': questData['questId'],
+            'session_id': sessionId,
+            'character_id': questData['characterId'],
+            'quest_data': jsonEncode(questData),
+            'quest_status': questData['questStatus'],
+            'progress_percentage': questData['progressPercentage'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    // Save character arcs
+    if (characterArcsData != null) {
+      for (var arcData in characterArcsData) {
+        await db.insert(
+          'character_arcs',
+          {
+            'arc_id': arcData['arcId'],
+            'session_id': sessionId,
+            'character_id': arcData['characterId'],
+            'arc_data': jsonEncode(arcData),
+            'current_stage': arcData['currentStage'],
+            'transformation_level': arcData['transformationLevel'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    // Save crafting projects
+    if (craftingProjectsData != null) {
+      for (var projectData in craftingProjectsData) {
+        await db.insert(
+          'crafting_projects',
+          {
+            'project_id': projectData['projectId'],
+            'session_id': sessionId,
+            'character_id': projectData['characterId'],
+            'recipe_id': projectData['recipeId'],
+            'project_data': jsonEncode(projectData),
+            'project_status': projectData['projectStatus'],
+            'progress_percentage': projectData['progressPercentage'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    // Save merchant inventories
+    if (merchantInventoriesData != null) {
+      for (var inventoryData in merchantInventoriesData) {
+        await db.insert(
+          'merchant_inventories',
+          {
+            'merchant_id': inventoryData['merchantId'],
+            'session_id': sessionId,
+            'inventory_data': jsonEncode(inventoryData),
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+  }
+
+  /// Load Phase 2 data for a session
+  Future<Map<String, dynamic>> loadPhase2Data(String sessionId) async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    Map<String, dynamic> phase2Data = {};
+
+    // Load NPC relationships
+    final relationshipsData = await db.query(
+      'npc_relationships',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['npcRelationships'] = relationshipsData.map((row) {
+      return jsonDecode(row['relationship_data'] as String);
+    }).toList();
+
+    // Load world events
+    final worldEventsData = await db.query(
+      'world_events',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['worldEvents'] = worldEventsData.map((row) {
+      return jsonDecode(row['event_data'] as String);
+    }).toList();
+
+    // Load faction conflicts
+    final conflictsData = await db.query(
+      'faction_conflicts',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['factionConflicts'] = conflictsData.map((row) {
+      return jsonDecode(row['conflict_data'] as String);
+    }).toList();
+
+    // Load personal quests
+    final questsData = await db.query(
+      'personal_quests',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['personalQuests'] = questsData.map((row) {
+      return jsonDecode(row['quest_data'] as String);
+    }).toList();
+
+    // Load character arcs
+    final arcsData = await db.query(
+      'character_arcs',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['characterArcs'] = arcsData.map((row) {
+      return jsonDecode(row['arc_data'] as String);
+    }).toList();
+
+    // Load crafting projects
+    final projectsData = await db.query(
+      'crafting_projects',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['craftingProjects'] = projectsData.map((row) {
+      return jsonDecode(row['project_data'] as String);
+    }).toList();
+
+    // Load merchant inventories
+    final inventoriesData = await db.query(
+      'merchant_inventories',
+      where: 'session_id = ?',
+      whereArgs: [sessionId],
+    );
+    phase2Data['merchantInventories'] = inventoriesData.map((row) {
+      return jsonDecode(row['inventory_data'] as String);
+    }).toList();
+
+    return phase2Data;
+  }
+
+  /// Save crafting recipes (global, not session-specific)
+  Future<void> saveCraftingRecipes(List<Map<String, dynamic>> recipesData) async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    for (var recipeData in recipesData) {
+      await db.insert(
+        'crafting_recipes',
+        {
+          'recipe_id': recipeData['recipeId'],
+          'recipe_data': jsonEncode(recipeData),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  /// Load all crafting recipes
+  Future<List<Map<String, dynamic>>> loadCraftingRecipes() async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    final recipesData = await db.query('crafting_recipes');
+    return recipesData.map((row) {
+      return jsonDecode(row['recipe_data'] as String) as Map<String, dynamic>;
+    }).toList();
+  }
+
+  /// Save item pricing data (global market data)
+  Future<void> saveItemPricing(List<Map<String, dynamic>> pricingData) async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    for (var itemPricing in pricingData) {
+      await db.insert(
+        'item_pricing',
+        {
+          'item_id': itemPricing['itemId'],
+          'pricing_data': jsonEncode(itemPricing),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  /// Load all item pricing data
+  Future<List<Map<String, dynamic>>> loadItemPricing() async {
+    final db = await database;
+    await _ensurePhase2TablesExist(db);
+
+    final pricingData = await db.query('item_pricing');
+    return pricingData.map((row) {
+      return jsonDecode(row['pricing_data'] as String) as Map<String, dynamic>;
+    }).toList();
+  }
 }
