@@ -3,6 +3,7 @@ import '../services/database_service.dart';
 import '../models/game_state.dart';
 import 'character_creation_screen.dart';
 import 'main_game_screen.dart';
+import 'session_lobby_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -64,6 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
         .then((_) => _loadCampaigns()); // Refresh list when returning
   }
 
+  void _goToSessionLobby() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SessionLobbyScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,8 +107,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   foregroundColor: Colors.white,
                 ),
                 child: const Text(
-                  'New Campaign',
+                  'New Campaign (Solo)',
                   style: TextStyle(fontSize: 18),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: _goToSessionLobby,
+                icon: const Icon(Icons.people),
+                label: const Text(
+                  'Multiplayer Session Lobby',
+                  style: TextStyle(fontSize: 18),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(20),
+                  backgroundColor: Colors.purple[700],
+                  foregroundColor: Colors.white,
                 ),
               ),
               const SizedBox(height: 24),

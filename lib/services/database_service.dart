@@ -964,10 +964,23 @@ class DatabaseService {
 
     await _ensureSessionTableExists(db);
 
-    return await db.query(
+    // Get sessions with player count
+    var sessions = await db.query(
       'game_sessions',
       orderBy: 'last_saved DESC',
     );
+
+    // Add player count to each session
+    for (var session in sessions) {
+      var playerCount = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM player_connections WHERE session_id = ?',
+        [session['session_id']],
+      );
+
+      session['player_count'] = playerCount.isNotEmpty ? playerCount[0]['count'] as int : 0;
+    }
+
+    return sessions;
   }
 
   // ============================================================================
